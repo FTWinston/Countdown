@@ -1,0 +1,27 @@
+.tile {
+    background-color: #048;
+    color: #fff;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 1.25em;
+    height: 1.25em;
+    margin: 0.15em 0.075em;
+
+    transition: color 1s;
+}
+
+.tile--blank {
+    color: transparent;
+}
+
+.tile:first-child {
+    margin-left: 0.15em;
+}
+
+.tile:last-child {
+    margin-right: 0.15em;
+}

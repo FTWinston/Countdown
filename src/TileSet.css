@@ -1,0 +1,78 @@
+.tileset {
+    background-color: #60A0C0;
+    display: inline-flex;
+    font-size: 4em;
+    border: solid 0.05em #008;
+}
+
+.tileset--size3, .tileset--size2, .tileset--size1 {
+  font-size: 21vw;
+}
+
+.tileset--size4 {
+  font-size: 15.75vw;
+}
+
+.tileset--size5 {
+  font-size: 12.6vw;
+}
+
+.tileset--size6 {
+  font-size: 10.5vw;
+}
+
+.tileset--size7 {
+  font-size: 9vw;
+}
+
+.tileset--size8 {
+  font-size: 7.88vw;
+}
+
+.tileset--size9 {
+  font-size: 7vw; /* 9 times 7 is 63 */
+}
+
+.tileset--size10 {
+  font-size: 6.3vw;
+}
+
+.tileset--size11 {
+  font-size: 5.73vw;
+}
+
+.tileset--size12 {
+  font-size: 5.25vw;
+}
+
+.tileset--size13 {
+  font-size: 5vw;
+}
+
+.tileset--size14 {
+  font-size: 4.85vw;
+}
+
+.tileset--size15 {
+  font-size: 4.2vw;
+}
+
+.tileset--size16 {
+  font-size: 3.94vw;
+}
+
+.tileset--size17 {
+  font-size: 3.71vw;
+}
+
+.tileset--size18 {
+  font-size: 3.5vw;
+}
+
+.tileset--size19 {
+  font-size: 3.32vw;
+}
+
+.tileset--size20 {
+  font-size: 3.15vw;
+}

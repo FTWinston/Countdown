@@ -1,0 +1,174 @@
+.clock {
+    width: 10em;
+    height: 10em;
+    border-radius: 10em;
+    background-color: #e1d4c8;
+    border: solid #0e1b2c 0.2em;
+    align-self: flex-end;
+    margin-right: 5vw;
+    position: relative;
+}
+
+.clock__hand {
+    width: 50%;
+    height: 4%;
+    background-color: black;
+
+    position: absolute;
+    top: 48%;
+    left: 50%;
+
+    transform-origin: 0 50%;
+}
+
+.clock__hmarker {
+    width: 100%;
+    height: 1%;
+    background-color: black;
+
+    position: absolute;
+    top: 49.5%;
+    left: 0;
+}
+
+.clock__vmarker {
+    width: 1%;
+    height: 100%;
+    background-color: black;
+
+    position: absolute;
+    top: 0;
+    left: 49.5%;
+}
+
+@media only screen and (max-height: 340px) {
+    .clock {
+        width: 50vmin;
+        height: 50vmin;
+        border-radius: 50vmin;
+    }
+}
+
+.clock--0s .clock__hand {
+    transform: rotate(90deg);
+}
+
+.clock--1s .clock__hand {
+    transform: rotate(84deg);
+}
+
+.clock--2s .clock__hand {
+    transform: rotate(78deg);
+}
+
+.clock--3s .clock__hand {
+    transform: rotate(72deg);
+}
+
+.clock--4s .clock__hand {
+    transform: rotate(66deg);
+}
+
+.clock--5s .clock__hand {
+    transform: rotate(60deg);
+}
+
+.clock--6s .clock__hand {
+    transform: rotate(54deg);
+}
+
+.clock--7s .clock__hand {
+    transform: rotate(48deg);
+}
+
+.clock--8s .clock__hand {
+    transform: rotate(42deg);
+}
+
+.clock--9s .clock__hand {
+    transform: rotate(36deg);
+}
+
+.clock--10s .clock__hand {
+    transform: rotate(30deg);
+}
+
+.clock--11s .clock__hand {
+    transform: rotate(24deg);
+}
+
+.clock--12s .clock__hand {
+    transform: rotate(18deg);
+}
+
+.clock--13s .clock__hand {
+    transform: rotate(12deg);
+}
+
+.clock--14s .clock__hand {
+    transform: rotate(6deg);
+}
+
+.clock--15s .clock__hand {
+    transform: rotate(0deg);
+}
+
+.clock--16s .clock__hand {
+    transform: rotate(-6deg);
+}
+
+.clock--17s .clock__hand {
+    transform: rotate(-12deg);
+}
+
+.clock--18s .clock__hand {
+    transform: rotate(-18deg);
+}
+
+.clock--19s .clock__hand {
+    transform: rotate(-24deg);
+}
+
+.clock--20s .clock__hand {
+    transform: rotate(-30deg);
+}
+
+.clock--21s .clock__hand {
+    transform: rotate(-36deg);
+}
+
+.clock--22s .clock__hand {
+    transform: rotate(-42deg);
+}
+
+.clock--23s .clock__hand {
+    transform: rotate(-48deg);
+}
+
+.clock--24s .clock__hand {
+    transform: rotate(-54deg);
+}
+
+.clock--25s .clock__hand {
+    transform: rotate(-60deg);
+}
+
+.clock--26s .clock__hand {
+    transform: rotate(-66deg);
+}
+
+.clock--27s .clock__hand {
+    transform: rotate(-72deg);
+}
+
+.clock--28s .clock__hand {
+    transform: rotate(-78deg);
+}
+
+.clock--29s .clock__hand {
+    transform: rotate(-84deg);
+}
+
+.clock--30s .clock__hand {
+    transform: rotate(-90deg);
+}
