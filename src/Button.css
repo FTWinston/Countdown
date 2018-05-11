@@ -4,10 +4,10 @@ button {
     color: black;
     font-weight: bold;
     border-radius: 0.5em;
-    margin: 1em;
     padding: 1em;
-    font-size: 2rem;
+    font-size: 2em;
     cursor: pointer;
+    transition: background-color 0.25s;
 }
 
 button[disabled] {
@@ -16,6 +16,7 @@ button[disabled] {
     cursor: not-allowed;
 }
 
-button:focus {
+button:focus, button:hover {
     outline: none;
+    background-color: #eee;
 }

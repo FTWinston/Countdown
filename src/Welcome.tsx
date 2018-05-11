@@ -13,7 +13,7 @@ interface IWelcomeProps {
 export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
     public render() {
         return (
-            <div className="screen screen--wellcome">
+            <div className="screen screen--welcome">
                 <TileSet text={['C','O','U','N','T','D','O','W','N']} />
                 {this.renderActions()}
             </div>
@@ -44,8 +44,13 @@ export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
                     onClick={selectConundrum}
                 />
                 <Button
-                    text="Full show"
+                    text="Full session"
                     enabled={true}
+                    onClick={selectFull}
+                />
+                <Button
+                    text="⛭"
+                    enabled={false}
                     onClick={selectFull}
                 />
             </div>

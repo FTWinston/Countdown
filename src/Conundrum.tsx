@@ -56,22 +56,34 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     public render() {
         const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
         
+        let screenClasses = 'screen screen--conundrum';
+
         let buttonsEtc: JSX.Element | undefined;
         switch (this.state.state) {
             case GameState.Setup:
             case GameState.WaitingForWorker:
-                buttonsEtc = this.renderSetup(); break;
+                screenClasses += ' screen--setup';
+                buttonsEtc = this.renderSetup();
+                break;
+            case GameState.Active:
+                screenClasses += ' screen--active';
+                break;
             case GameState.Finished:
-                buttonsEtc = this.renderFinished(); break;
+                screenClasses += ' screen--finished';
+                buttonsEtc = this.renderFinished();
+                break;
             case GameState.Revealed:
-                buttonsEtc = this.renderRevealed(); break;
+                screenClasses += ' screen--finished';
+                buttonsEtc = this.renderRevealed();
+                break;
         }
 
         return (
-            <div className="screen screen--conundrum">
+            <div className={screenClasses}>
                 {clock}
                 <TileSet text={this.state.conundrumLetters} size={this.props.numLetters} />
                 <TileSet
+                    className="tileset--solution"
                     text={this.state.state === GameState.Revealed ? this.state.solutionLetters : []}
                     size={this.props.numLetters}
                 />

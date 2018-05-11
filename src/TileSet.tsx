@@ -5,10 +5,12 @@ import './TileSet.css';
 interface ITileSetProps {
     text: string[];
     size?: number;
+    className?: string;
 }
 
 export class TileSet extends React.PureComponent<ITileSetProps, {}> {
     public render() {
+
         const tiles = this.props.text.slice();
         if (this.props.size !== undefined) {
             while (this.props.size > tiles.length) {
@@ -16,8 +18,13 @@ export class TileSet extends React.PureComponent<ITileSetProps, {}> {
             }
         }
 
+        let classes = `tileset tileset--size${tiles.length}`;
+        if (this.props.className !== undefined) {
+            classes += ' tileset--solution';
+        }
+
         return (
-            <div className={`tileset tileset--size${tiles.length}`}>
+            <div className={classes}>
                 {tiles.map((text, idx) => <Tile text={text} key={idx} />)}
             </div>
         );

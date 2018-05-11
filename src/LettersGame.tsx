@@ -5,6 +5,7 @@ import { GameState } from './GameState';
 import workerScript from './LettersWorker';
 import { shuffle } from './Random';
 import './Screen.css';
+import './Solution.css';
 import { TileSet } from './TileSet';
 
 interface ILettersGameProps {
@@ -50,18 +51,29 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     public render() {
         const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
 
+        let screenClasses = 'screen screen--letters';
+
         let buttonsEtc: JSX.Element | undefined;
         switch (this.state.state) {
             case GameState.Setup:
-                buttonsEtc = this.renderSetup(); break;
+                screenClasses += ' screen--setup';
+                buttonsEtc = this.renderSetup();
+                break;
+            case GameState.Active:
+                screenClasses += ' screen--active';
+                break;
             case GameState.Finished:
-                buttonsEtc = this.renderFinished(false); break;
+                screenClasses += ' screen--finished';
+                buttonsEtc = this.renderFinished(false);
+                break;
             case GameState.Revealed:
-                buttonsEtc = this.renderFinished(true); break;
+                screenClasses += ' screen--finished';
+                buttonsEtc = this.renderFinished(true);
+                break;
         }
 
         return (
-            <div className="screen screen--letters">
+            <div className={screenClasses}>
                 {clock}
                 <TileSet text={this.state.letters} size={this.props.minLetters} />
                 {buttonsEtc}
@@ -107,7 +119,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
 
         const solutions = showSolutions
             ? (
-                <div className="screen__solutions">
+                <div className="solution">
                     {this.state.solutions.map((sol, idx) => this.renderSolution(sol, idx))}
                 </div>
             )
@@ -134,7 +146,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
 
     private renderSolution(word: string, index: number) {
         return (
-            <div className="game__solution" key={index}>
+            <div className="solution__value" key={index}>
                 {word}
             </div>
         );

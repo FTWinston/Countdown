@@ -10,6 +10,6 @@ export class Interlude extends React.PureComponent<IInterludeProps, {}> {
     }
 
     public componentDidMount() {
-        window.setTimeout(() => this.props.endGame(), 1000);
+        window.setTimeout(() => this.props.endGame(), 750);
     }
 }

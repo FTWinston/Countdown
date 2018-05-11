@@ -5,6 +5,8 @@ import { GameState } from './GameState';
 import workerScript from './NumbersWorker';
 import { randomInt, shuffle } from './Random';
 import './Screen.css';
+import './Solution.css';
+import './Target.css';
 import { TileSet } from './TileSet';
 
 interface INumbersGameProps {
@@ -44,23 +46,34 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
     
     public render() {
         const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
+        
+        let screenClasses = 'screen screen--numbers';
 
         let buttonsEtc: JSX.Element | undefined;
         switch (this.state.state) {
             case GameState.Setup:
-                buttonsEtc = this.renderSetup(); break;
+                screenClasses += ' screen--setup'
+                buttonsEtc = this.renderSetup();
+                break;
+            case GameState.Active:
+                screenClasses += ' screen--active';
+                break;
             case GameState.Finished:
-                buttonsEtc = this.renderFinished(false); break;
+                screenClasses += ' screen--finished';
+                buttonsEtc = this.renderFinished(false);
+                break;
             case GameState.Revealed:
-                buttonsEtc = this.renderFinished(true); break;
+                screenClasses += ' screen--finished';
+                buttonsEtc = this.renderFinished(true);
+                break;
         }
 
         const target = this.state.target === 0
             ? undefined
-            : <div className="screen__target">{this.state.target}</div>;
+            : <div className="target">{this.state.target}</div>;
 
         return (
-            <div className="screen screen--letters">
+            <div className={screenClasses}>
                 {clock}
                 {target}
                 <TileSet text={this.state.numbers.map(n => n.toString())} size={this.props.numberCount} />
@@ -126,12 +139,12 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
 
         let numAdded = 0;
         for (numAdded=0; numAdded<numBig; numAdded++) {
-            await this.delay(1000);
+            await this.delay(1250);
             this.addNumber(big.shift() as number);
         }
 
         for (numAdded; numAdded<this.props.numberCount; numAdded++) {
-            await this.delay(1000);
+            await this.delay(1250);
             this.addNumber(small.shift() as number);
         }
 

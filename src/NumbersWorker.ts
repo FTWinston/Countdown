@@ -4,7 +4,7 @@ const workerCode = () => {
         workaround.postMessage(msg);
     }
 
-    // let target: number;
+    let target: number;
     // let numbers: number[];
     let closestValue: number = -1;
     let bestSolution: string = '';
@@ -13,11 +13,11 @@ const workerCode = () => {
         const data = e.data as [string, number, number[]];
 
         if (data[0] === 'calculate') {
-            // target = data[1];
+            target = data[1];
             // numbers = data[2];
             
             // TODO: start calculating solutions
-            closestValue = -1;
+            closestValue = target;
             bestSolution = 'Sorry I can\'t solve this yet';
         }
         else if (data[0] === 'respond') {

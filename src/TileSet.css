@@ -4,6 +4,11 @@
     font-size: 4em;
     border: solid 0.05em #008;
     flex-shrink: 0;
+    grid-area: tiles;
+}
+
+.tileset--solution {
+    grid-area: solution;
 }
 
 .tileset--size3, .tileset--size2, .tileset--size1 {
