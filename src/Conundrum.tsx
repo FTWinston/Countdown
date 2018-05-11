@@ -54,7 +54,9 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     }
 
     public render() {
-        const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
+        const clock = this.state.state === GameState.Active || this.state.state === GameState.Paused
+            ? <Clock time={this.state.timeLeft} />
+            : undefined;
         
         let screenClasses = 'screen screen--conundrum';
 
@@ -67,6 +69,11 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
                 break;
             case GameState.Active:
                 screenClasses += ' screen--active';
+                buttonsEtc = this.renderPause();
+                break;
+            case GameState.Paused:
+                screenClasses += ' screen--active';
+                buttonsEtc = this.renderResume();
                 break;
             case GameState.Finished:
                 screenClasses += ' screen--finished';
@@ -101,6 +108,34 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
                     text="Start"
                     enabled={true}
                     onClick={startGame}
+                />
+            </div>
+        );
+    }
+
+    private renderPause() {
+        const pause = () => this.pauseGame();
+
+        return (
+            <div className="screen__actions">
+                <Button
+                    text="Pause"
+                    enabled={true}
+                    onClick={pause}
+                />
+            </div>
+        );
+    }
+
+    private renderResume() {
+        const resume = () => this.startGame();
+
+        return (
+            <div className="screen__actions">
+                <Button
+                    text="Resume"
+                    enabled={true}
+                    onClick={resume}
                 />
             </div>
         );
@@ -172,5 +207,13 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
                 timeLeft: secsRemaining,
             };
         })
+    }
+
+    private pauseGame() {
+        window.clearInterval(this.timerID);
+        
+        this.setState({
+            state: GameState.Paused,
+        });
     }
 }
