@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { GameState } from './GameState';
+import workerScript from './LettersWorker';
 import { shuffle } from './Random';
 import './Screen.css';
 import { TileSet } from './TileSet';
@@ -29,6 +30,7 @@ interface ILettersGameState {
 
 export class LettersGame extends React.PureComponent<ILettersGameProps, ILettersGameState> {
     private timerID: number;
+    private worker: Worker;
 
     constructor(props: ILettersGameProps) {
         super(props);
@@ -139,17 +141,9 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     }
 
     private showSolutions() {
-        const bestSolutions = this.getBestSolutions();
-
         this.setState({
-            solutions: bestSolutions,
             state: GameState.Revealed,
         });
-    }
-
-    private getBestSolutions() {
-        // TODO: retrieve from background thread somewhere
-        return ['Fake', 'Solution', 'Needs', 'Work'];
     }
 
     private addLetter(isConsonant: boolean) {
@@ -186,6 +180,17 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     }
 
     private startGame() {
+        this.worker = new Worker(workerScript);
+
+        this.worker.onmessage = (m) => {
+            const data = m.data as string[];
+            this.setState({
+                solutions: data,
+            });
+        };
+        
+        this.worker.postMessage(['calculate', this.state.letters]);
+
         this.setState({ state: GameState.Active });
         this.timerID = window.setInterval(() => this.tick(), 1000);
     }
@@ -195,7 +200,11 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
             const secsRemaining = prevState.timeLeft - 1;
             const finished = secsRemaining === 0;
 
-            if (finished) {
+            if (finished) {        
+                if (this.state.solutions.length === 0) {
+                    this.worker.postMessage(['respond', []]);
+                }
+
                 window.clearInterval(this.timerID);
             }
 
