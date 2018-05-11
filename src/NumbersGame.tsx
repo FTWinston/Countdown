@@ -141,7 +141,7 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             target: randomInt(this.props.minTarget, this.props.maxTarget + 1),
         });
 
-        await this.delay(1000);
+        await this.delay(2000);
         
         this.startGame();
     }
