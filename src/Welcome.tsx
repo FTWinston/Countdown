@@ -35,7 +35,7 @@ export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
                 />
                 <Button
                     text="Numbers game"
-                    enabled={false}
+                    enabled={true}
                     onClick={selectNumbers}
                 />
                 <Button
@@ -45,7 +45,7 @@ export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
                 />
                 <Button
                     text="Full show"
-                    enabled={false}
+                    enabled={true}
                     onClick={selectFull}
                 />
             </div>

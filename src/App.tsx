@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Conundrum } from './Conundrum';
 import { Interlude } from './Interlude';
 import { LettersGame } from './LettersGame';
+import { NumbersGame } from './NumbersGame';
 import { Welcome } from './Welcome';
 
 const enum AppScreen {
@@ -18,6 +19,11 @@ interface IAppState {
     screenQueue: AppScreen[];
     minLetters: number;
     maxLetters: number;
+    smallNumbers: number[];
+    bigNumbers: number[];
+    numberCount: number;
+    minTarget: number;
+    maxTarget: number;
     conundrumSize: number;
 }
 
@@ -26,11 +32,16 @@ class App extends React.PureComponent<{}, IAppState> {
         super(props);
 
         this.state = {
+            bigNumbers: [25, 50, 75, 100],
             conundrumSize: 9,
             currentScreen: AppScreen.Welcome,
             maxLetters: 9,
+            maxTarget: 999,
             minLetters: 9,
+            minTarget: 101,
+            numberCount: 6,
             screenQueue: [],
+            smallNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         };
     }
 
@@ -45,7 +56,7 @@ class App extends React.PureComponent<{}, IAppState> {
             case AppScreen.Interlude:
                 return <Interlude endGame={nextScreen} />;
             case AppScreen.Setup:
-                return <div />;
+                return <div>No configuration currently available</div>;
             case AppScreen.Letters:
                 return (
                     <LettersGame
@@ -55,12 +66,21 @@ class App extends React.PureComponent<{}, IAppState> {
                     />
                 );
             case AppScreen.Numbers:
-                return <div />;
+                return (
+                    <NumbersGame
+                        numberCount={this.state.numberCount}
+                        minTarget={this.state.minTarget}
+                        maxTarget={this.state.maxTarget}
+                        smallNumbers={this.state.smallNumbers}
+                        bigNumbers={this.state.bigNumbers}
+                        endGame={nextScreen}
+                    />
+                );
             case AppScreen.Conundrum:
-            return (
-                <Conundrum
-                    numLetters={this.state.conundrumSize}
-                    endGame={nextScreen}
+                return (
+                    <Conundrum
+                        numLetters={this.state.conundrumSize}
+                        endGame={nextScreen}
                 />
             );
             default:

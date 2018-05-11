@@ -18,6 +18,15 @@
     color: transparent;
 }
 
+.tile--long {
+    font-size: 0.75em;
+    
+    /* scale these to be the same */
+    width: 1.66667em;
+    height: 1.66667em;
+    margin: 0.2em 0.1em;
+}
+
 .tile:first-child {
     margin-left: 0.15em;
 }

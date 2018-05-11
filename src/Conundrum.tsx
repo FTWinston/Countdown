@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { GameState } from './GameState';
-import { randomInt } from './Random';
+import { shuffle } from './Random';
 import './Screen.css';
 import { TileSet } from './TileSet';
 
@@ -102,7 +102,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, ILettersGame
 
     private startGame() {
         const solution = 'COUNTDOWN'.split('');
-        const conundrum = this.shuffle(solution.slice());
+        const conundrum = shuffle(solution.slice());
 
         this.setState({
             conundrumLetters: conundrum,
@@ -111,27 +111,6 @@ export class Conundrum extends React.PureComponent<IConundrumProps, ILettersGame
         });
 
         this.timerID = window.setInterval(() => this.tick(), 1000);
-    }
-
-    private shuffle(array: string[]) {
-        let currentIndex = array.length;
-        let temporaryValue: string;
-        let randomIndex: number;
-      
-        // While there remain elements to shuffle...
-        while (0 !== currentIndex) {
-      
-            // Pick a remaining element...
-            randomIndex = randomInt(0, currentIndex);
-            currentIndex -= 1;
-      
-            // And swap it with the current element.
-            temporaryValue = array[currentIndex];
-            array[currentIndex] = array[randomIndex];
-            array[randomIndex] = temporaryValue;
-        }
-      
-        return array;
     }
 
     private tick() {

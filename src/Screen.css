@@ -19,3 +19,12 @@
     justify-content: space-evenly;
     align-items: center;
 }
+
+.screen__target {
+    color: #c90;
+    border: solid 0.05em #c90;
+    background-color: #111;
+    font-family: monospace;
+    padding: 0 0.2em;
+    font-size: 4rem;
+}

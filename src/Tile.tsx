@@ -11,6 +11,9 @@ export class Tile extends React.PureComponent<ITileProps, {}> {
         if (this.props.text === '') {
             classes += ' tile--blank';
         }
+        if (this.props.text.length > 2) {
+            classes += ' tile--long';
+        }
 
         return (
             <div className={classes}>
