@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { GameState } from './GameState';
+import workerScript from './NumbersWorker';
 import { randomInt, shuffle } from './Random';
 import './Screen.css';
 import { TileSet } from './TileSet';
@@ -20,12 +21,14 @@ interface INumbersGameState {
     numbers: number[];
     target: number;
     timeLeft: number;
-    solution?: string
+    solutionValue?: number;
+    solution?: string;
     hasChosen: boolean;
 }
 
 export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbersGameState> {
     private timerID: number;
+    private worker: Worker;
 
     constructor(props: INumbersGameProps) {
         super(props);
@@ -86,14 +89,13 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
         const endGame = () => this.props.endGame();
         const revealSolution = () => this.showSolutions();
 
-        const solutions = showSolutions
+        const solution = showSolutions
             ? this.renderSolution()
             : <Button text="Show solution" enabled={true} onClick={revealSolution} />;
 
         return (
             <div className="screen__actions">
-                {solutions}
-
+                {solution}
                 <Button text="End game" enabled={true} onClick={endGame} />
             </div>
         );
@@ -101,17 +103,15 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
 
     private renderSolution() {
         return (
-            <div className="game__solution">
-                {this.state.solution}
+            <div className="solution">
+                <div className="solution__value">{this.state.solutionValue}</div>
+                <div className="solution__working">{this.state.solution}</div>
             </div>
         );
     }
 
     private showSolutions() {
-        // TODO: retrieve from background thread somewhere
-
         this.setState({
-            solution: 'Sorry, cannot yet solve these',
             state: GameState.Revealed,
         });
     }
@@ -137,9 +137,22 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
 
         await this.delay(2000);
 
+        const targetValue = randomInt(this.props.minTarget, this.props.maxTarget + 1);
         this.setState({
-            target: randomInt(this.props.minTarget, this.props.maxTarget + 1),
+            target: targetValue,
         });
+
+        this.worker = new Worker(workerScript);
+
+        this.worker.onmessage = (m) => {
+            const data = m.data as [number, string];
+            this.setState({
+                solution: data[1],
+                solutionValue: data[0],
+            });
+        };
+        
+        this.worker.postMessage(['calculate', targetValue, this.state.numbers]);
 
         await this.delay(2000);
         
@@ -175,6 +188,9 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             const finished = secsRemaining === 0;
 
             if (finished) {
+                if (this.state.solutionValue === undefined) {
+                    this.worker.postMessage(['respond', 0, []]); // demand the best solution now
+                }
                 window.clearInterval(this.timerID);
             }
 

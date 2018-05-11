@@ -4,4 +4,5 @@ export const enum GameState {
     Paused,
     Finished,
     Revealed,
+    WaitingForWorker,
 }

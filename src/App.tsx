@@ -31,6 +31,8 @@ class App extends React.PureComponent<{}, IAppState> {
     constructor(props: {}) {
         super(props);
 
+        // TODO: letters should be weighted as per scrabble
+        // TODO: letters game needs min 3 vowels and min 4 consonants. Store these values in app the state.
         this.state = {
             bigNumbers: [25, 50, 75, 100],
             conundrumSize: 9,
@@ -41,7 +43,7 @@ class App extends React.PureComponent<{}, IAppState> {
             minTarget: 101,
             numberCount: 6,
             screenQueue: [],
-            smallNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            smallNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         };
     }
 

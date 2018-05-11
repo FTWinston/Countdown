@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
+import workerScript from './ConundrumWorker';
 import { GameState } from './GameState';
-import { shuffle } from './Random';
 import './Screen.css';
 import { TileSet } from './TileSet';
 
@@ -11,15 +11,16 @@ interface IConundrumProps {
     endGame: () => void;
 }
 
-interface ILettersGameState {
+interface IConundrumState {
     state: GameState;
     conundrumLetters: string[];
     solutionLetters: string[];
     timeLeft: number;
 }
 
-export class Conundrum extends React.PureComponent<IConundrumProps, ILettersGameState> {
+export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumState> {
     private timerID: number;
+    private worker: Worker;
 
     constructor(props: IConundrumProps) {
         super(props);
@@ -32,12 +33,33 @@ export class Conundrum extends React.PureComponent<IConundrumProps, ILettersGame
         };
     }
     
+    public componentDidMount() {
+        this.worker = new Worker(workerScript);
+
+        this.worker.onmessage = (m) => {
+            const data = m.data as [string, string];
+            this.setState({
+                conundrumLetters: data[0].split(''),
+                solutionLetters: data[1].split(''),
+            });
+        };
+        
+        this.worker.postMessage(['generate', this.props.numLetters]);
+    }
+
+    public componentWillUpdate(nextProps: IConundrumProps, nextState: IConundrumState) {
+        if (this.state.conundrumLetters.length === 0 && nextState.conundrumLetters.length > 0) {
+            this.startGame();
+        }
+    }
+
     public render() {
         const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
         
         let buttonsEtc: JSX.Element | undefined;
         switch (this.state.state) {
             case GameState.Setup:
+            case GameState.WaitingForWorker:
                 buttonsEtc = this.renderSetup(); break;
             case GameState.Finished:
                 buttonsEtc = this.renderFinished(); break;
@@ -59,7 +81,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, ILettersGame
     }
 
     private renderSetup() {
-        const startGame = () => this.startGame();
+        const startGame = () => this.tryStartGame();
 
         return (
             <div className="screen__actions">
@@ -100,13 +122,24 @@ export class Conundrum extends React.PureComponent<IConundrumProps, ILettersGame
         );
     }
 
+    private tryStartGame() {
+        // don't start until we have a conundrum. Wait for the worker...
+        if (this.state.conundrumLetters.length === 0) {
+            this.worker.postMessage(['respond', 0]);
+
+            this.setState({
+                state: GameState.WaitingForWorker,
+            });
+            return;
+        }
+
+        this.startGame()
+    }
+
     private startGame() {
-        const solution = 'COUNTDOWN'.split('');
-        const conundrum = shuffle(solution.slice());
+        this.worker.terminate();
 
         this.setState({
-            conundrumLetters: conundrum,
-            solutionLetters: solution,
             state: GameState.Active,
         });
 
