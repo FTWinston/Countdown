@@ -2,21 +2,29 @@ import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { GameState } from './GameState';
-import { randomInt } from './Random';
+import { shuffle } from './Random';
 import './Screen.css';
 import { TileSet } from './TileSet';
 
 interface ILettersGameProps {
     minLetters: number;
     maxLetters: number;
+    minConsonants: number;
+    minVowels: number;
+    consonants: string[];
+    vowels: string[];
     endGame: () => void;
 }
 
 interface ILettersGameState {
     state: GameState;
     letters: string[];
+    numConsonants: number;
+    numVowels: number;
     timeLeft: number;
     solutions: string[];
+    consonantsAvailable: string[];
+    vowelsAvailable: string[];
 }
 
 export class LettersGame extends React.PureComponent<ILettersGameProps, ILettersGameState> {
@@ -26,10 +34,14 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         super(props);
 
         this.state = {
+            consonantsAvailable: shuffle(this.props.consonants.slice()),
             letters: [],
+            numConsonants: 0,
+            numVowels: 0,
             solutions: [],
             state: GameState.Setup,
             timeLeft: 30,
+            vowelsAvailable: shuffle(this.props.vowels.slice()),
         };
     }
     
@@ -56,20 +68,26 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     }
 
     private renderSetup() {
-        const addConsonant = () => this.addLetter(this.getConsonant());
-        const addVowel = () => this.addLetter(this.getVowel());
+        const addConsonant = () => this.addLetter(true);
+        const addVowel = () => this.addLetter(false);
         const startGame = () => this.startGame();
+
+        const lettersRemaining = this.props.minLetters - this.state.letters.length;
+        const needsAllConsonants = this.state.numConsonants < this.props.minConsonants
+            && (this.props.minConsonants - this.state.numConsonants) >= lettersRemaining;
+        const needsAllVowels = this.state.numVowels < this.props.minVowels
+            && (this.props.minVowels - this.state.numVowels) >= lettersRemaining;
 
         return (
             <div className="screen__actions">
                 <Button
                     text="Consonant"
-                    enabled={this.state.letters.length < this.props.maxLetters}
+                    enabled={this.state.letters.length < this.props.maxLetters && !needsAllVowels}
                     onClick={addConsonant}
                 />
                 <Button
                     text="Vowel"
-                    enabled={this.state.letters.length < this.props.maxLetters}
+                    enabled={this.state.letters.length < this.props.maxLetters && !needsAllConsonants}
                     onClick={addVowel}
                 />
                 <Button
@@ -134,24 +152,37 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         return ['Fake', 'Solution', 'Needs', 'Work'];
     }
 
-    private getConsonant() {
-        const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
-        return consonants[randomInt(0, consonants.length)];
-    }
+    private addLetter(isConsonant: boolean) {
+        let letter: string;
 
-    private getVowel() {
-        const vowels = ['A', 'E', 'I', 'O', 'U'];
-        return vowels[randomInt(0, vowels.length)];
-    }
+        if (isConsonant) {
+            this.setState(prevState => {
+                const remaining = prevState.consonantsAvailable.slice();
+                letter = remaining.shift() as string;
+                return {
+                    consonantsAvailable: remaining,
+                    numConsonants: prevState.numConsonants + 1,
+                };
+            });
+        }
+        else {
+            this.setState(prevState => {
+                const remaining = prevState.vowelsAvailable.slice();
+                letter = remaining.shift() as string;
+                return {
+                    numVowels: prevState.numVowels + 1,
+                    vowelsAvailable: remaining,
+                };
+            });
+        }
 
-    private addLetter(letter: string) {
         this.setState(prevState => {
             const allLetters = prevState.letters.slice();
             allLetters.push(letter);
             return {
                 letters: allLetters,
             };
-        })
+        });
     }
 
     private startGame() {

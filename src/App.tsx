@@ -19,6 +19,10 @@ interface IAppState {
     screenQueue: AppScreen[];
     minLetters: number;
     maxLetters: number;
+    minConsonants: number;
+    minVowels: number;
+    consonants: string[];
+    vowels: string[];
     smallNumbers: number[];
     bigNumbers: number[];
     numberCount: number;
@@ -35,15 +39,47 @@ class App extends React.PureComponent<{}, IAppState> {
         // TODO: letters game needs min 3 vowels and min 4 consonants. Store these values in app the state.
         this.state = {
             bigNumbers: [25, 50, 75, 100],
+            consonants: [
+                'B', 'B',
+                'C', 'C', 'C',
+                'D', 'D', 'D', 'D', 'D', 'D',
+                'F', 'F',
+                'G', 'G', 'G',
+                'H', 'H',
+                'J',
+                'K',
+                'L', 'L', 'L', 'L', 'L',
+                'M', 'M', 'M', 'M',
+                'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N',
+                'P', 'P', 'P', 'P',
+                'Q',
+                'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
+                'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S',
+                'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T',
+                'V',
+                'W',
+                'X',
+                'Y',
+                'Z',
+            ],
             conundrumSize: 9,
             currentScreen: AppScreen.Welcome,
             maxLetters: 9,
             maxTarget: 999,
+            minConsonants: 4,
             minLetters: 9,
             minTarget: 101,
+            minVowels: 3,
             numberCount: 6,
             screenQueue: [],
             smallNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            vowels: [
+                'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
+                'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E',
+                'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I',
+                'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
+                'U', 'U', 'U', 'U', 'U',
+            ],
         };
     }
 
@@ -64,6 +100,10 @@ class App extends React.PureComponent<{}, IAppState> {
                     <LettersGame
                         minLetters={this.state.minLetters}
                         maxLetters={this.state.maxLetters}
+                        minConsonants={this.state.minConsonants}
+                        minVowels={this.state.minVowels}
+                        consonants={this.state.consonants}
+                        vowels={this.state.vowels}
                         endGame={nextScreen}
                     />
                 );

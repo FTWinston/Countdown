@@ -15,3 +15,7 @@ button[disabled] {
     border-color: #999;
     cursor: not-allowed;
 }
+
+button:focus {
+    outline: none;
+}
