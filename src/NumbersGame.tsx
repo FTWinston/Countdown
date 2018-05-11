@@ -126,22 +126,23 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
 
         let numAdded = 0;
         for (numAdded=0; numAdded<numBig; numAdded++) {
-            await this.delay(750);
-            this.addNumber(big.pop() as number);
+            await this.delay(1000);
+            this.addNumber(big.shift() as number);
         }
 
         for (numAdded; numAdded<this.props.numberCount; numAdded++) {
-            await this.delay(750);
-            this.addNumber(small.pop() as number);
+            await this.delay(1000);
+            this.addNumber(small.shift() as number);
         }
 
-        await this.delay(1500);
+        await this.delay(2000);
 
         this.setState({
             target: randomInt(this.props.minTarget, this.props.maxTarget + 1),
         });
 
-        await this.delay(1500);
+        await this.delay(1000);
+        
         this.startGame();
     }
 

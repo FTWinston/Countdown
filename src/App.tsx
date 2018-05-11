@@ -145,7 +145,7 @@ class App extends React.PureComponent<{}, IAppState> {
             screen = AppScreen.Welcome;
         }
         else {
-            screen = queue.pop() as AppScreen;
+            screen = queue.shift() as AppScreen;
         }
 
         this.setState({

@@ -33,7 +33,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, ILettersGame
     }
     
     public render() {
-        const clock = this.state.state === GameState.Setup ? undefined : <Clock time={this.state.timeLeft} />;
+        const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
         
         let buttonsEtc: JSX.Element | undefined;
         switch (this.state.state) {
