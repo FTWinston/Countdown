@@ -1,20 +1,22 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
-import './Game.css';
 import { GameState } from './GameState';
 import { randomInt } from './Random';
+import './Screen.css';
 import { TileSet } from './TileSet';
 
 interface ILettersGameProps {
     minLetters: number;
     maxLetters: number;
+    endGame: () => void;
 }
 
 interface ILettersGameState {
     state: GameState;
     letters: string[];
     timeLeft: number;
+    solutions: string[];
 }
 
 export class LettersGame extends React.PureComponent<ILettersGameProps, ILettersGameState> {
@@ -25,20 +27,30 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
 
         this.state = {
             letters: [],
+            solutions: [],
             state: GameState.Setup,
             timeLeft: 30,
         };
     }
     
     public render() {
-        const clock = this.state.state === GameState.Setup ? undefined : <Clock time={this.state.timeLeft} />;
-        const selection = this.state.state === GameState.Setup ? this.renderSetup() : undefined;
+        const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
+
+        let buttonsEtc: JSX.Element | undefined;
+        switch (this.state.state) {
+            case GameState.Setup:
+                buttonsEtc = this.renderSetup(); break;
+            case GameState.Finished:
+                buttonsEtc = this.renderFinished(false); break;
+            case GameState.Revealed:
+                buttonsEtc = this.renderFinished(true); break;
+        }
 
         return (
-            <div className="game game--letters">
+            <div className="screen screen--letters">
                 {clock}
                 <TileSet text={this.state.letters} size={this.props.minLetters} />
-                {selection}
+                {buttonsEtc}
             </div>
         );
     }
@@ -49,7 +61,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         const startGame = () => this.startGame();
 
         return (
-            <div className="game--actions">
+            <div className="screen__actions">
                 <Button
                     text="Consonant"
                     enabled={this.state.letters.length < this.props.maxLetters}
@@ -67,6 +79,59 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
                 />
             </div>
         );
+    }
+
+    private renderFinished(showSolutions: boolean) {
+        const endGame = () => this.props.endGame();
+        const revealSolutions = () => this.showSolutions();
+
+        const solutions = showSolutions
+            ? (
+                <div className="screen__solutions">
+                    {this.state.solutions.map((sol, idx) => this.renderSolution(sol, idx))}
+                </div>
+            )
+            : (
+                <Button
+                    text="Show solutions"
+                    enabled={true}
+                    onClick={revealSolutions}
+                />
+            )
+
+        return (
+            <div className="screen__actions">
+                {solutions}
+                
+                <Button
+                    text="End game"
+                    enabled={true}
+                    onClick={endGame}
+                />
+            </div>
+        );
+    }
+
+    private renderSolution(word: string, index: number) {
+        return (
+            <div className="game__solution" key={index}>
+                {word}
+            </div>
+        );
+    }
+
+    private showSolutions() {
+        const bestSolutions = this.getBestSolutions();
+
+        this.setState({
+            solutions: bestSolutions,
+            state: GameState.Revealed,
+        });
+    }
+
+    private getBestSolutions() {
+        // TODO: retrieve from background thread somewhere
+        return ['Fake', 'Solution', 'Needs', 'Work'];
     }
 
     private getConsonant() {

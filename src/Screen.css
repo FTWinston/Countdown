@@ -1,4 +1,4 @@
-.game {
+.screen {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -6,8 +6,16 @@
     height: 100vh;
 }
 
-.game--actions {
+.screen__actions {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.screen__solutions {
+    display: flex;
+    flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
 }

@@ -3,6 +3,7 @@
     display: inline-flex;
     font-size: 4em;
     border: solid 0.05em #008;
+    flex-shrink: 0;
 }
 
 .tileset--size3, .tileset--size2, .tileset--size1 {
