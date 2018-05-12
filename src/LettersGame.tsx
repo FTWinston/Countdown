@@ -201,7 +201,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
             });
         };
         
-        this.worker.postMessage(['calculate', this.state.letters]);
+        this.worker.postMessage(['calculate', this.state.letters.join('')]);
 
         this.setState({ state: GameState.Active });
         this.timerID = window.setInterval(() => this.tick(), 1000);
@@ -210,7 +210,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     private tick() {
         this.setState(prevState => {
             const secsRemaining = prevState.timeLeft - 1;
-            const finished = secsRemaining === 0;
+            const finished = secsRemaining === -1;
 
             if (finished) {        
                 if (this.state.solutions.length === 0) {

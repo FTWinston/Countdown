@@ -7,7 +7,7 @@ const workerCode = () => {
     const bestWords: string[] = [];
 
     self.onmessage = e => {
-        const data = e.data as [string, string[]];
+        const data = e.data as [string, string];
 
         if (data[0] === 'calculate') {
 

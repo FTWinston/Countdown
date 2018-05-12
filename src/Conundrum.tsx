@@ -199,7 +199,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     private tick() {
         this.setState(prevState => {
             const secsRemaining = prevState.timeLeft - 1;
-            const finished = secsRemaining === 0;
+            const finished = secsRemaining === -1;
 
             if (finished) {
                 window.clearInterval(this.timerID);

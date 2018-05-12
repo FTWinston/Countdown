@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
+import { delay } from './Delay';
 import { GameState } from './GameState';
 import workerScript from './NumbersWorker';
 import { randomInt, shuffle } from './Random';
@@ -147,16 +148,16 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
 
         let numAdded = 0;
         for (numAdded=0; numAdded<numBig; numAdded++) {
-            await this.delay(1250);
+            await delay(1250);
             this.addNumber(big.shift() as number);
         }
 
         for (numAdded; numAdded<this.props.numberCount; numAdded++) {
-            await this.delay(1250);
+            await delay(1250);
             this.addNumber(small.shift() as number);
         }
 
-        await this.delay(2000);
+        await delay(2000);
 
         const targetValue = randomInt(this.props.minTarget, this.props.maxTarget + 1);
         this.setState({
@@ -175,7 +176,7 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
         
         this.worker.postMessage(['calculate', targetValue, this.state.numbers]);
 
-        await this.delay(2000);
+        await delay(2000);
         
         this.startGame();
     }
@@ -190,14 +191,6 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
         })
     }
 
-    private delay(milliseconds: number): Promise<void> {
-        return new Promise<void>(resolve => {
-            setTimeout(() => {
-                resolve();
-            }, milliseconds);
-        });
-    }
-
     private startGame() {
         this.setState({ state: GameState.Active });
         this.timerID = window.setInterval(() => this.tick(), 1000);
@@ -206,7 +199,7 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
     private tick() {
         this.setState(prevState => {
             const secsRemaining = prevState.timeLeft - 1;
-            const finished = secsRemaining === 0;
+            const finished = secsRemaining === -1;
 
             if (finished) {
                 if (this.state.solutionValue === undefined) {
