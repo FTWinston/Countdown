@@ -43,8 +43,11 @@ const workerCode = () => {
         const data = e.data as [string, number];
 
         if (data[0] === 'generate') {
-            // size = data[1];
-            // TODO: start calculating conundrums
+            /*
+            size = data[1];
+            const url = `http://wordfinder.yourdictionary.com/scrabble/articleAjax/type/letter-words/letter/${size}?sEcho=1&iColumns=1&sColumns=&iDisplayStart=0&iDisplayLength=5000&mDataProp_0=word&sSearch=&sSearch_0=&bRegex_0=false&bSearchable_0=true&iSortCol_0=2&sSortDir_0=asc&iSortingCols=1&bSortable_0=true&sorting_field=wwf`
+            */
+            
             bestResult = [shuffleWord('TELEPHONE'), 'TELEPHONE'];
         }
         else if (data[0] === 'respond') {
