@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
+import { delay } from './Delay';
 import { GameState } from './GameState';
 import workerScript from './LettersWorker';
 import { shuffle } from './Random';
 import './Screen.css';
 import './Solution.css';
+import { speak } from './Speech';
 import { TileSet } from './TileSet';
 
 interface ILettersGameProps {
@@ -84,7 +86,6 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     private renderSetup() {
         const addConsonant = () => this.addLetter(true);
         const addVowel = () => this.addLetter(false);
-        const startGame = () => this.startGame();
 
         const lettersRemaining = this.props.minLetters - this.state.letters.length;
         const needsAllConsonants = this.state.numConsonants < this.props.minConsonants
@@ -103,11 +104,6 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
                     text="Vowel"
                     enabled={this.state.letters.length < this.props.maxLetters && !needsAllConsonants}
                     onClick={addVowel}
-                />
-                <Button
-                    text="Start"
-                    enabled={this.state.letters.length >= this.props.minLetters}
-                    onClick={startGame}
                 />
             </div>
         );
@@ -165,6 +161,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
             this.setState(prevState => {
                 const remaining = prevState.consonantsAvailable.slice();
                 letter = remaining.shift() as string;
+                speak(letter);
                 return {
                     consonantsAvailable: remaining,
                     numConsonants: prevState.numConsonants + 1,
@@ -175,6 +172,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
             this.setState(prevState => {
                 const remaining = prevState.vowelsAvailable.slice();
                 letter = remaining.shift() as string;
+                speak(letter);
                 return {
                     numVowels: prevState.numVowels + 1,
                     vowelsAvailable: remaining,
@@ -185,13 +183,18 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         this.setState(prevState => {
             const allLetters = prevState.letters.slice();
             allLetters.push(letter);
+
+            if (allLetters.length >= this.props.minLetters) {
+                this.startGame();
+            }
+
             return {
                 letters: allLetters,
             };
         });
     }
 
-    private startGame() {
+    private async startGame() {
         this.worker = new Worker(workerScript);
 
         this.worker.onmessage = (m) => {
@@ -202,6 +205,8 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         };
         
         this.worker.postMessage(['calculate', this.state.letters.join('')]);
+
+        await delay(1500);
 
         this.setState({ state: GameState.Active });
         this.timerID = window.setInterval(() => this.tick(), 1000);

@@ -7,6 +7,7 @@ import workerScript from './NumbersWorker';
 import { randomInt, shuffle } from './Random';
 import './Screen.css';
 import './Solution.css';
+import { speak } from './Speech';
 import './Target.css';
 import { TileSet } from './TileSet';
 
@@ -157,9 +158,11 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             this.addNumber(small.shift() as number);
         }
 
+        const targetValue = randomInt(this.props.minTarget, this.props.maxTarget + 1);
+        speak(`and your target is ${targetValue}`, true);
+
         await delay(2000);
 
-        const targetValue = randomInt(this.props.minTarget, this.props.maxTarget + 1);
         this.setState({
             target: targetValue,
         });
@@ -177,11 +180,13 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
         this.worker.postMessage(['calculate', targetValue, this.state.numbers]);
 
         await delay(2000);
-        
+
         this.startGame();
     }
 
     private addNumber(num: number) {
+        speak(num.toString(), true);
+
         this.setState(prevState => {
             const allNumbers = prevState.numbers.slice();
             allNumbers.push(num);

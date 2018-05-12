@@ -99,25 +99,13 @@
         "actions";
 }
 
-.screen--letters.screen--setup .screen__actions {
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr;
-}
-
-@media only screen and (max-aspect-ratio: 1/1) {
-    .screen--letters.screen--setup .screen__actions {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 1fr;
-    }
-}
-
-.screen--letters.screen--finished .screen__actions, .screen--numbers.screen--finished .screen__actions {
+.screen--letters.screen .screen__actions, .screen--numbers.screen--finished .screen__actions {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
 }
 
 @media only screen and (max-aspect-ratio: 1/1) {
-    .screen--letters.screen--finished .screen__actions, .screen--numbers.screen--finished .screen__actions {
+    .screen--letters .screen__actions, .screen--numbers.screen--finished .screen__actions {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr 1fr;
     }
