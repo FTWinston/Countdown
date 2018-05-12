@@ -48,7 +48,10 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     }
 
     public componentWillUpdate(nextProps: IConundrumProps, nextState: IConundrumState) {
-        if (this.state.conundrumLetters.length === 0 && nextState.conundrumLetters.length > 0) {
+        if (this.state.state === GameState.WaitingForWorker
+            && this.state.conundrumLetters.length === 0
+            && nextState.conundrumLetters.length > 0
+        ) {
             this.startGame();
         }
     }
@@ -88,7 +91,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
         return (
             <div className={screenClasses}>
                 {clock}
-                <TileSet text={this.state.conundrumLetters} size={this.props.numLetters} />
+                <TileSet text={this.state.state === GameState.Setup ? [] : this.state.conundrumLetters} size={this.props.numLetters} />
                 <TileSet
                     className="tileset--solution"
                     text={this.state.state === GameState.Revealed ? this.state.solutionLetters : []}
