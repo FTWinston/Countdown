@@ -12,7 +12,6 @@ const workerCode = () => {
         if (data[0] === 'calculate') {
 
             // TODO: start calculating solutions
-            bestWords.push('DUNNO');
             bestWords.push('CANT');
             bestWords.push('SOLVE');
             bestWords.push('YET');

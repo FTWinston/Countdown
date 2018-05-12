@@ -87,6 +87,7 @@
 
 
 .screen--letters.screen--active {
+    grid-template-rows: 1fr 1fr;
     grid-template-areas:
         "clock"
         "tiles";
