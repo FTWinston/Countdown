@@ -43,8 +43,6 @@ const workerCode = () => {
             bestValue = value;
             bestDistance = distance;
             bestSolution = solution;
-
-            console.log(`new best, ${value}: ${solution}`);
         }
     }
 
