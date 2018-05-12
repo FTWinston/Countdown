@@ -91,7 +91,9 @@ const workerCode = () => {
                 continue;
             }
 
-            const nextDisplay = `(${display} ${operator[0]} ${appendNumber})`;
+            const nextDisplay = canContinue
+                ? `(${display} ${operator[0]} ${appendNumber})`
+                : `${display} ${operator[0]} ${appendNumber}`; // no brackets for the last one
 
             testValue(nextValue, nextDisplay);
 
