@@ -88,7 +88,15 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             const text = i === 1 ? '1 big number' : `${i} big numbers`;
             const action = () => this.chooseNumbers(i);
             
-            buttons.push(<Button text={text} enabled={!this.state.hasChosen} onClick={action} key={i} />);
+            buttons.push((
+                <Button
+                    text={text}
+                    enabled={!this.state.hasChosen}
+                    onClick={action}
+                    key={i}
+                    className="button--short" />
+                )
+            );
         }
 
         return (

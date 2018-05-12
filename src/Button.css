@@ -20,3 +20,7 @@ button:focus, button:hover {
     outline: none;
     background-color: #eee;
 }
+
+button.button--short {
+    padding: 0.5em 1em;
+}
