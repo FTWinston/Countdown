@@ -84,6 +84,27 @@ export class Clock extends React.PureComponent<IClockProps, IClockState> {
         ctx.fill();
         ctx.stroke();
 
+        const handAngle = Math.PI / 2 - Math.PI * this.props.time / 30;
+
+        ctx.fillStyle = '#f0eae5';
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 0.35, -Math.PI / 2, handAngle, false);
+        ctx.arc(0, 0, r * 0.95, handAngle, -Math.PI / 2, true);
+        ctx.fill();
+
+        ctx.rotate(handAngle);
+        ctx.fillStyle = '#0e1b2c';
+
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.05);
+        ctx.lineTo(r, r * 0.005);
+        ctx.lineTo(r, -r * 0.005);
+        ctx.lineTo(0, -r * 0.05);
+        ctx.arc(0, 0, r * 0.05, Math.PI / 2, 3 * Math.PI / 2);
+        ctx.fill();
+
+        ctx.rotate(-handAngle);
+
         ctx.lineWidth = r * 0.015;
         ctx.beginPath();
         ctx.moveTo(0, -r);
@@ -123,20 +144,6 @@ export class Clock extends React.PureComponent<IClockProps, IClockState> {
         ctx.moveTo(0, r * 0.9);
         ctx.lineTo(0, r * 0.6);
         ctx.stroke();
-
-        ctx.rotate(- Math.PI / 3 - Math.PI * this.props.time / 30);
-        ctx.fillStyle = '#0e1b2c';
-
-        ctx.beginPath();
-        ctx.moveTo(0, r * 0.05);
-        ctx.lineTo(r, r * 0.005);
-        ctx.lineTo(r, -r * 0.005);
-        ctx.lineTo(0, -r * 0.05);
-        ctx.arc(0, 0, r * 0.05, Math.PI / 2, 3 * Math.PI / 2);
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.fill();
 
         ctx.restore();
     }
