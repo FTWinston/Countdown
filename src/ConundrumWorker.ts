@@ -37,32 +37,13 @@ const workerCode = () => {
     }
 
     function loadRandomWord() {
-        loadWord(0)
-            .then((firstData: [number, string]) => {        
-                const length = firstData[0];
-                const num = randomInt(0, length);
-
-                loadWord(num)
-                    .then((data: [number, string]) => {
-                        const word = data[1];
-                        bestResult = [shuffleWord(word), word];
-
-                        // TODO: load several words and see which can be "anagramized" the best
-                        postMsg(bestResult);
-                    });
-            });
-    }
-
-    function loadWord(pos: number) {
-        return fetch(`http://wordfinder.yourdictionary.com/scrabble/articleAjax/type/letter-words/letter/${size}`
-            + `?sEcho=1&iColumns=1&sColumns=&iDisplayStart=${pos}&iDisplayLength=1&mDataProp_0=word&sSearch=&sSearch_0=`
-            + '&bRegex_0=false&bSearchable_0=true&iSortCol_0=2&sSortDir_0=asc&iSortingCols=1&bSortable_0=true&sorting_field=wwf')
-        .then(response => response.json())
-        .then(data => [
-                data.iTotalRecords,
-                data.aaData[0].word,
-            ]
-        );
+        fetch(`${self.location.origin}/conundrums/${size}.txt`)
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\r\n');
+            const word = lines[randomInt(0, lines.length)];
+            bestResult = [shuffleWord(word), word];
+        });
     }
 
     let size: number = 0;
