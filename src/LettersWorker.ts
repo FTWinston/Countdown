@@ -4,17 +4,24 @@ const workerCode = () => {
         workaround.postMessage(msg);
     }
 
-    const bestWords: string[] = [];
+    let bestWords: string[] = ['Got no', 'response'];
+    const numResults = 3;
+
+    function findWords(letters: string) {
+        return fetch(`https://cors-proxy.htmldriven.com/?url=http://www.anagramica.com/all/${letters.toLowerCase()}`)
+        .then(response => response.json())
+        .then(data => {
+            const allWords = JSON.parse(data.body).all as string[];
+            const useWords = allWords.length < numResults ? allWords : allWords.slice(0, numResults);
+            bestWords = useWords.map(w => w.toUpperCase());
+        });
+    }
 
     self.onmessage = e => {
         const data = e.data as [string, string];
 
         if (data[0] === 'calculate') {
-
-            // TODO: start calculating solutions
-            bestWords.push('CANT');
-            bestWords.push('SOLVE');
-            bestWords.push('YET');
+            findWords(data[1]);
         }
         else if (data[0] === 'respond') {
             // a result is needed NOW
