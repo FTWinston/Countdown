@@ -101,12 +101,13 @@ class App extends React.PureComponent<{}, IAppState> {
         
         switch (this.state.currentScreen) {
             case AppScreen.Interlude:
-                return <Interlude endGame={nextScreen} />;
+                return <Interlude endGame={nextScreen} key="screen" />;
             case AppScreen.Setup:
                 return <div>No configuration currently available</div>;
             case AppScreen.Letters:
                 return (
                     <LettersGame
+                        key="screen"
                         minLetters={this.state.minLetters}
                         maxLetters={this.state.maxLetters}
                         minConsonants={this.state.minConsonants}
@@ -120,6 +121,7 @@ class App extends React.PureComponent<{}, IAppState> {
             case AppScreen.Numbers:
                 return (
                     <NumbersGame
+                        key="screen"
                         numberCount={this.state.numberCount}
                         minTarget={this.state.minTarget}
                         maxTarget={this.state.maxTarget}
@@ -132,6 +134,7 @@ class App extends React.PureComponent<{}, IAppState> {
             case AppScreen.Conundrum:
                 return (
                     <Conundrum
+                        key="screen"
                         numLetters={this.state.conundrumSize}
                         endGame={nextScreen}
                         audio={this.audio}
@@ -139,7 +142,9 @@ class App extends React.PureComponent<{}, IAppState> {
             );
             default:
                 return (
-                    <Welcome selectLetters={selectLetters}
+                    <Welcome
+                        key="screen"
+                        selectLetters={selectLetters}
                         selectNumbers={selectNumbers}
                         selectConundrum={selectConundrum}
                         selectFullShow={selectFullShow}
