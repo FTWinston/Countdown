@@ -1,0 +1,1 @@
+export const musicStartPosition = 0.1;

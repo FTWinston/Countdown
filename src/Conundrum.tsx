@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
+import { musicStartPosition } from './Constants';
 import workerScript from './ConundrumWorker';
 import { GameState } from './GameState';
 import './Screen.css';
@@ -9,6 +10,7 @@ import { TileSet } from './TileSet';
 interface IConundrumProps {
     numLetters: number;
     endGame: () => void;
+    audio: HTMLAudioElement;
 }
 
 interface IConundrumState {
@@ -131,7 +133,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     }
 
     private renderResume() {
-        const resume = () => this.startGame();
+        const resume = () => this.resumeGame();
 
         return (
             <div className="screen__actions">
@@ -189,6 +191,9 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     private startGame() {
         this.worker.terminate();
 
+        this.props.audio.currentTime = musicStartPosition;
+        this.props.audio.play();
+
         this.setState({
             state: GameState.Active,
         });
@@ -215,8 +220,22 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     private pauseGame() {
         window.clearInterval(this.timerID);
         
+        this.props.audio.pause();
+
         this.setState({
             state: GameState.Paused,
         });
+    }
+
+    private resumeGame() {
+        // the clock starts/stops to the nearest second, so the music needs to do the same
+        this.props.audio.currentTime = musicStartPosition + (30 - this.state.timeLeft);
+        this.props.audio.play();
+
+        this.setState({
+            state: GameState.Active,
+        });
+
+        this.timerID = window.setInterval(() => this.tick(), 1000);
     }
 }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
+import { musicStartPosition } from './Constants';
 import { delay } from './Delay';
 import { GameState } from './GameState';
 import workerScript from './LettersWorker';
@@ -18,6 +19,7 @@ interface ILettersGameProps {
     consonants: string[];
     vowels: string[];
     endGame: () => void;
+    audio: HTMLAudioElement;
 }
 
 interface ILettersGameState {
@@ -208,6 +210,9 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
 
         await delay(1500);
 
+        this.props.audio.currentTime = musicStartPosition;
+        this.props.audio.play();
+        
         this.setState({ state: GameState.Active });
         this.timerID = window.setInterval(() => this.tick(), 1000);
     }

@@ -32,6 +32,8 @@ interface IAppState {
 }
 
 class App extends React.PureComponent<{}, IAppState> {
+    private audio: HTMLAudioElement;
+
     constructor(props: {}) {
         super(props);
 
@@ -84,6 +86,13 @@ class App extends React.PureComponent<{}, IAppState> {
     }
 
     public render() {
+        return [
+            this.renderAudio(),
+            this.renderScreen(),
+        ];
+    }
+
+    private renderScreen() {
         const nextScreen = () => this.advanceToNextScreen();
         const selectLetters = () => this.startLetters();
         const selectNumbers = () => this.startNumbers();
@@ -105,6 +114,7 @@ class App extends React.PureComponent<{}, IAppState> {
                         consonants={this.state.consonants}
                         vowels={this.state.vowels}
                         endGame={nextScreen}
+                        audio={this.audio}
                     />
                 );
             case AppScreen.Numbers:
@@ -116,6 +126,7 @@ class App extends React.PureComponent<{}, IAppState> {
                         smallNumbers={this.state.smallNumbers}
                         bigNumbers={this.state.bigNumbers}
                         endGame={nextScreen}
+                        audio={this.audio}
                     />
                 );
             case AppScreen.Conundrum:
@@ -123,6 +134,7 @@ class App extends React.PureComponent<{}, IAppState> {
                     <Conundrum
                         numLetters={this.state.conundrumSize}
                         endGame={nextScreen}
+                        audio={this.audio}
                 />
             );
             default:
@@ -134,6 +146,17 @@ class App extends React.PureComponent<{}, IAppState> {
                     />
                 );
         }
+    }
+
+    private renderAudio() {
+        return (
+            <audio
+                src="countdown.mp3"
+                preload="auto"
+                key="audio"
+                ref={a => { if (a !== null) { this.audio = a; }}}
+            />
+        )
     }
 
     private startLetters() {

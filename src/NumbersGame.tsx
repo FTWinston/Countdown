@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { Clock } from './Clock';
+import { musicStartPosition } from './Constants';
 import { delay } from './Delay';
 import { GameState } from './GameState';
 import workerScript from './NumbersWorker';
@@ -18,6 +19,7 @@ interface INumbersGameProps {
     minTarget: number;
     maxTarget: number;
     endGame: () => void;
+    audio: HTMLAudioElement;
 }
 
 interface INumbersGameState {
@@ -159,7 +161,8 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
         }
 
         const targetValue = randomInt(this.props.minTarget, this.props.maxTarget + 1);
-        speak(`and your target is ${targetValue}`, true);
+        speak('and your target is', true);
+        speak(targetValue.toString(), false);
 
         await delay(2000);
 
@@ -197,6 +200,9 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
     }
 
     private startGame() {
+        this.props.audio.currentTime = musicStartPosition;
+        this.props.audio.play();
+        
         this.setState({ state: GameState.Active });
         this.timerID = window.setInterval(() => this.tick(), 1000);
     }
