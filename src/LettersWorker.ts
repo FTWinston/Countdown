@@ -13,7 +13,7 @@ const workerCode = () => {
         .then(data => {
             const allWords = JSON.parse(data.body).all as string[];
             const useWords = allWords.length < numResults ? allWords : allWords.slice(0, numResults);
-            bestWords = useWords.map(w => w.toUpperCase());
+            bestWords = useWords.map(w => `(${w.length}) ${w.toUpperCase()}`);
         });
     }
 
