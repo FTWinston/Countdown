@@ -40,7 +40,7 @@ const workerCode = () => {
         fetch(`${self.location.origin}/conundrums/${size}.txt`)
         .then(response => response.text())
         .then(text => {
-            const lines = text.split('\r\n');
+            const lines = text.split('\n');
             const word = lines[randomInt(0, lines.length)];
             bestResult = [shuffleWord(word), word];
         });
