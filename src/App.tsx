@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { About } from './About';
 import { Conundrum } from './Conundrum';
 import { Interlude } from './Interlude';
 import { LettersGame } from './LettersGame';
@@ -7,7 +8,8 @@ import { Welcome } from './Welcome';
 
 const enum AppScreen {
     Welcome,
-    Setup,
+    Settings,
+    About,
     Letters,
     Numbers,
     Conundrum,
@@ -98,12 +100,15 @@ class App extends React.PureComponent<{}, IAppState> {
         const selectNumbers = () => this.startNumbers();
         const selectConundrum = () => this.startConundrum();
         const selectFullShow = () => this.startFullShow();
+        const selectAbout = () => this.showAboutScreen();
         
         switch (this.state.currentScreen) {
             case AppScreen.Interlude:
                 return <Interlude endGame={nextScreen} key="screen" />;
-            case AppScreen.Setup:
-                return <div>No configuration currently available</div>;
+            case AppScreen.Settings:
+                return <div key="screen">No configuration currently available</div>;
+            case AppScreen.About:
+                return <About key="screen" goBack={nextScreen} />;
             case AppScreen.Letters:
                 return (
                     <LettersGame
@@ -148,6 +153,7 @@ class App extends React.PureComponent<{}, IAppState> {
                         selectNumbers={selectNumbers}
                         selectConundrum={selectConundrum}
                         selectFullShow={selectFullShow}
+                        selectAbout={selectAbout}
                     />
                 );
         }
@@ -182,6 +188,13 @@ class App extends React.PureComponent<{}, IAppState> {
         this.setState({
             currentScreen: AppScreen.Interlude,
             screenQueue: [AppScreen.Conundrum],
+        });
+    }
+
+    private showAboutScreen() {
+        this.setState({
+            currentScreen: AppScreen.Interlude,
+            screenQueue: [AppScreen.About],
         });
     }
 

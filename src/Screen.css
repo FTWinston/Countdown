@@ -32,6 +32,15 @@
     grid-area: actions;
 }
 
+.screen__text {
+    margin: 0 2em;
+}
+
+.screen--about {
+    display: flex;
+    flex-direction: column;
+}
+
 .screen--welcome {
     grid-template-rows: 1fr 1fr;
 
@@ -41,7 +50,7 @@
 }
 
 .screen--welcome .screen__actions {
-    grid-template-columns: 2fr 2fr 2fr 2fr 1fr;
+    grid-template-columns: 2fr 2fr 2fr 2fr 1fr 1fr;
 }
 
 
@@ -61,7 +70,7 @@
 
 @media only screen and (max-aspect-ratio: 1/1) {
     .screen--welcome .screen__actions {
-        grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
         grid-template-columns: 1fr;
         font-size: 1.75vw;
     }
