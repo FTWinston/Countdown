@@ -4,11 +4,17 @@ import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
 import workerScript from './ConundrumWorker';
 import { GameState } from './GameState';
+import { shuffle } from './Random';
 import './Screen.css';
 import { TileSet } from './TileSet';
 
-interface IConundrumProps {
+export interface IConundrumSettings {
     numLetters: number;
+    word?: string;
+    scrambled?: string;
+}
+
+interface IConundrumProps extends IConundrumSettings {
     endGame: () => void;
     audio: HTMLAudioElement;
 }
@@ -36,17 +42,29 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     }
     
     public componentDidMount() {
-        this.worker = new Worker(workerScript);
+        if (this.props.word === undefined) {
+            this.worker = new Worker(workerScript);
 
-        this.worker.onmessage = (m) => {
-            const data = m.data as [string, string];
+            this.worker.onmessage = (m) => {
+                const data = m.data as [string, string];
+                this.setState({
+                    conundrumLetters: data[0].split(''),
+                    solutionLetters: data[1].split(''),
+                });
+            };
+            
+            this.worker.postMessage(['generate', this.props.numLetters]);
+        }
+        else {
+            const scrambled = this.props.scrambled === undefined
+                ? shuffle(this.props.word.split('')).join('')
+                : this.props.scrambled;
+
             this.setState({
-                conundrumLetters: data[0].split(''),
-                solutionLetters: data[1].split(''),
+                conundrumLetters: scrambled.split(''),
+                solutionLetters: this.props.word.split(''),
             });
-        };
-        
-        this.worker.postMessage(['generate', this.props.numLetters]);
+        }
     }
 
     public componentWillUpdate(nextProps: IConundrumProps, nextState: IConundrumState) {

@@ -11,13 +11,16 @@ import './Solution.css';
 import { speak } from './Speech';
 import { TileSet } from './TileSet';
 
-interface ILettersGameProps {
+export interface ILettersGameSettings {
     minLetters: number;
     maxLetters: number;
     minConsonants: number;
     minVowels: number;
     consonants: string[];
     vowels: string[];
+}
+
+interface ILettersGameProps extends ILettersGameSettings {
     endGame: () => void;
     audio: HTMLAudioElement;
 }

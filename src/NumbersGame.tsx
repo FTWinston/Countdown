@@ -12,12 +12,15 @@ import { speak } from './Speech';
 import './Target.css';
 import { TileSet } from './TileSet';
 
-interface INumbersGameProps {
+export interface INumbersGameSettings {
     smallNumbers: number[];
     bigNumbers: number[];
     numberCount: number;
     minTarget: number;
     maxTarget: number;
+}
+
+interface INumbersGameProps extends INumbersGameSettings {
     endGame: () => void;
     audio: HTMLAudioElement;
 }
