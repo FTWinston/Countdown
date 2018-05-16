@@ -1,10 +1,10 @@
 import * as React from 'react';
+import Worker from 'worker-loader!./NumbersWorker';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
 import { delay } from './Delay';
 import { GameState } from './GameState';
-import workerScript from './NumbersWorker';
 import { randomInt, shuffle } from './Random';
 import './Screen.css';
 import './Solution.css';
@@ -173,7 +173,7 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             target: targetValue,
         });
 
-        this.worker = new Worker(workerScript);
+        this.worker = new Worker();
 
         this.worker.onmessage = (m) => {
             const data = m.data as [number, string];

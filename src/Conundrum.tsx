@@ -1,8 +1,8 @@
 import * as React from 'react';
+import Worker from 'worker-loader!./ConundrumWorker';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
-import workerScript from './ConundrumWorker';
 import { GameState } from './GameState';
 import { shuffle } from './Random';
 import './Screen.css';
@@ -43,7 +43,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     
     public componentDidMount() {
         if (this.props.word === undefined) {
-            this.worker = new Worker(workerScript);
+            this.worker = new Worker();
 
             this.worker.onmessage = (m) => {
                 const data = m.data as [string, string];

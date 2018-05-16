@@ -22,3 +22,7 @@ export function shuffle<T>(array: T[]) {
   
     return array;
 }
+
+export function shuffleWord(word: string) {
+    return shuffle(word.split('')).join('');
+}

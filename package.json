@@ -5,7 +5,8 @@
   "dependencies": {
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
-    "react-scripts-ts": "2.15.1"
+    "react-scripts-ts": "2.15.1",
+    "worker-loader": "^1.1.1"
   },
   "scripts": {
     "start": "react-scripts-ts start",

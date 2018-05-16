@@ -1,10 +1,10 @@
 import * as React from 'react';
+import Worker from 'worker-loader!./LettersWorker';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
 import { delay } from './Delay';
 import { GameState } from './GameState';
-import workerScript from './LettersWorker';
 import { shuffle } from './Random';
 import './Screen.css';
 import './Solution.css';
@@ -200,7 +200,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     }
 
     private async startGame() {
-        this.worker = new Worker(workerScript);
+        this.worker = new Worker();
 
         this.worker.onmessage = (m) => {
             const data = m.data as string[];
