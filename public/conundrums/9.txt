@@ -791,7 +791,6 @@ furniture
 mushrooms
 fortunate
 nationals
-charlotte
 recurrent
 cooperate
 recursive
