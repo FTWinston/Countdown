@@ -11,7 +11,7 @@ async function loadRandomWord() {
     const text = await response.text();
     
     const lines = text.split('\n');
-    const word = lines[randomInt(0, lines.length)].trim();
+    const word = lines[randomInt(0, lines.length)].trim().toUpperCase();
     let scrambled = shuffleWord(word);
     bestResult = [scrambled, word];
 
