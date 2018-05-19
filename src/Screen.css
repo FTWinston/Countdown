@@ -34,6 +34,7 @@
 
 .screen__text {
     margin: 0 2em;
+    overflow-y: auto;
 }
 
 .screen--about {
