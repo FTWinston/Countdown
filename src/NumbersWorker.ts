@@ -16,11 +16,59 @@ let bestSolution: string = '';
 type Operator = [string, (a: number, b: number) => number | null];
 type Expression = Array<Operator | number>;
 
+function add(a: number, b: number) {
+    if (a < b) {
+        return null; // don't do it this way around, it doesn't look pleasant
+    }
+
+    return a + b;
+}
+
+function subtract(a: number, b: number) {
+    const val = a - b;
+    
+    if (val === b) {
+        return null; // a valid, but pointless operation
+    }
+    
+    if (val <= 0) {
+        return null; // not allowed by game rules
+    }
+
+    return val;
+}
+
+function multiply(a: number, b: number) {
+    if (a < b) {
+        return null; // don't do it this way around, it doesn't look pleasant
+    }
+
+    if (b === 1) {
+        return null; // a valid, but pointless operation
+    }
+
+    return a * b;
+}
+
+function divide(a: number, b: number) {
+    if (b === 1) {
+        return null; // a valid, but pointless operation
+    }
+
+    const val = a / b;
+
+    if (!isInt(val)) {
+        return null; // not allowed by game rules
+    }
+    
+    return val;
+}
+
 const operators: Operator[] = [
-    ['+', (a, b) => a + b],
-    ['-', (a, b) => { const val = a - b; if (val === b) { return null; /* valid, but pointless */} return val <= 0 ? null : val; }],
-    ['x', (a, b) => { if (a === 1 || b === 1) { return null; /* valid, but pointless*/} return a * b; }],
-    ['÷', (a, b) => { if (b === 1) { return null; /* valid, but pointless*/} const val = a / b; return isInt(val) ? val : null; }],
+    ['+', add],
+    ['-', subtract],
+    ['x', multiply],
+    ['÷', divide],
 ];
 
 self.onmessage = e => {
