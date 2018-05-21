@@ -13,8 +13,13 @@ let bestValue: number = -1;
 let bestDistance = 99999;
 let bestSolution: string = '';
 
-type Operator = [string, (a: number, b: number) => number | null];
-type Expression = Array<Operator | number>;
+class Operator {
+    constructor(public readonly text: string, public readonly displayLinear: boolean, public readonly action: (a: number, b: number) => number | null) {
+
+    }
+}
+
+export type Expression = Array<Operator | number>;
 
 function add(a: number, b: number) {
     if (a < b) {
@@ -64,27 +69,33 @@ function divide(a: number, b: number) {
     return val;
 }
 
-const operators: Operator[] = [
-    ['+', add],
-    ['-', subtract],
-    ['x', multiply],
-    ['÷', divide],
+export const operators: Operator[] = [
+    new Operator('+', true, add),
+    new Operator('-', true, subtract),
+    new Operator('x', false, multiply),
+    new Operator('÷', false, divide),
 ];
 
 self.onmessage = e => {
     const data = e.data as [string, number, number[]];
 
     if (data[0] === 'calculate') {
-        target = data[1];
-        numbers = data[2];
-        
-        forEachPermutation(numbers, [], numbers.length, applyOperatorPositionPermutations);
+        solve(data[1], data[2]);
     }
     else if (data[0] === 'respond') {
         // a result is needed NOW
 
         postNumbersResult([bestValue, bestSolution]);
     }
+}
+
+export function solve(targetVal: number, useNumbers: number[]) {
+    target = targetVal;
+    numbers = useNumbers;
+
+    forEachPermutation(numbers, [], numbers.length, applyOperatorPositionPermutations);
+
+    return [bestValue, bestSolution];
 }
 
 function testSolution(result: number, solution: Expression, solutionElementsToKeep: number) {
@@ -215,7 +226,7 @@ function testSolve(postfix: Expression) {
 
         const operand2 = stack.pop() as number;
         const operand1 = stack.pop() as number;
-        const result = element[1](operand1, operand2);
+        const result = element.action(operand1, operand2);
 
         if (result === null) {
             return;
@@ -227,22 +238,42 @@ function testSolve(postfix: Expression) {
     }
 }
 
-function writeExpression(postfix: Expression) {
-    const stack: string[] = [];
+class InfixOperation {
+    constructor(public readonly text: string, public readonly operator: Operator | null) {
+    }
+
+    public toString() {
+        return this.text;
+    }
+}
+
+export function writeExpression(postfix: Expression) {
+    const stack: InfixOperation[] = [];
 
     for (const element of postfix) {
         if (typeof element === 'number') {
-            stack.push(element.toString());
+            stack.push(new InfixOperation(element.toString(), null));
             continue;
         }
 
-        const operand2 = stack.pop() as string;
-        const operand1 = stack.pop() as string;
-        const bracketed = `(${operand1} ${element[0]} ${operand2})`;
+        const operator = element;
 
-        stack.push(bracketed);
+        const operand2 = stack.pop() as InfixOperation;
+        const operand1 = stack.pop() as InfixOperation;
+        
+        const bracketNeededOperand1 = operand1.operator !== null
+            && (!operator.displayLinear || !operand1.operator.displayLinear);
+        let text = bracketNeededOperand1 ?  `(${operand1.text})` : operand1.text;
+
+        text += ` ${operator.text} `;
+        
+        const bracketNeededOperand2 = operand2.operator !== null
+            && (!operator.displayLinear || !operand2.operator.displayLinear);
+        text += bracketNeededOperand2 ?  `(${operand2.text})` : operand2.text;
+
+        const operation = new InfixOperation(text, operator);
+        stack.push(operation);
     }
 
-    const fullText = stack.join(' ');
-    return fullText.substr(1, fullText.length - 2);
+    return stack.join(' ');
 }
