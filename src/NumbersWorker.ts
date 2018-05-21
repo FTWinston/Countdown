@@ -98,16 +98,24 @@ export function solve(targetVal: number, useNumbers: number[]) {
     return [bestValue, bestSolution];
 }
 
-function testSolution(result: number, solution: Expression, solutionElementsToKeep: number) {
+function testSolution(result: number, solution: Expression, firstUnusedSolutionElement: number) {
     const distance = Math.abs(result - target);
     
-    if (distance < bestDistance || (distance === bestDistance && solution.length < bestSolution.length)) {
-        bestValue = result;
-        bestDistance = distance;
-
-        const solutionExpression = solution.slice(0, solutionElementsToKeep);
-        bestSolution = writeExpression(solutionExpression);
+    if (distance > bestDistance) {
+        return;
     }
+
+    const solutionExpression = solution.slice(0, firstUnusedSolutionElement); // chop equal amount from start and end?
+    
+    const writtenSolution = writeExpression(solutionExpression);
+
+    if (distance === bestDistance && writtenSolution.length > bestSolution.length) {
+        return;
+    }
+
+    bestValue = result;
+    bestDistance = distance;
+    bestSolution = writtenSolution;
 }
 
 function forEachPermutation<T>(items: T[], permutation: T[], size: number, forEach: (val: T[]) => void) {
@@ -211,9 +219,9 @@ function testSolve(postfix: Expression) {
 
     const stack = [];
 
-    let numUsedElements = 0;
+    let firstUnusedElement = 0;
     for (const element of postfix) {
-        numUsedElements++;
+        firstUnusedElement++;
 
         if (typeof element === 'number') {
             stack.push(element);
@@ -232,7 +240,7 @@ function testSolve(postfix: Expression) {
             return;
         }
 
-        testSolution(result, postfix, numUsedElements);
+        testSolution(result, postfix, firstUnusedElement);
 
         stack.push(result);
     }
@@ -249,6 +257,8 @@ class InfixOperation {
 
 export function writeExpression(postfix: Expression) {
     const stack: InfixOperation[] = [];
+    const multiplication = operators[2];
+    let firstUsedElement = postfix.length;
 
     for (const element of postfix) {
         if (typeof element === 'number') {
@@ -260,20 +270,35 @@ export function writeExpression(postfix: Expression) {
 
         const operand2 = stack.pop() as InfixOperation;
         const operand1 = stack.pop() as InfixOperation;
+        const firstOperandIndex = stack.length;
+        if (firstOperandIndex < firstUsedElement) {
+            firstUsedElement = firstOperandIndex;
+        }
         
-        const bracketNeededOperand1 = operand1.operator !== null
-            && (!operator.displayLinear || !operand1.operator.displayLinear);
-        let text = bracketNeededOperand1 ?  `(${operand1.text})` : operand1.text;
-
+        let text = bracketNeeded(operand1, operator) ?  `(${operand1.text})` : operand1.text;
         text += ` ${operator.text} `;
-        
-        const bracketNeededOperand2 = operand2.operator !== null
-            && (!operator.displayLinear || !operand2.operator.displayLinear);
-        text += bracketNeededOperand2 ?  `(${operand2.text})` : operand2.text;
+        text += bracketNeeded(operand2, operator) ?  `(${operand2.text})` : operand2.text;
 
         const operation = new InfixOperation(text, operator);
         stack.push(operation);
     }
 
+    if (firstUsedElement > 0) {
+        stack.splice(0, firstUsedElement);
+    }
+
     return stack.join(' ');
+
+    function bracketNeeded(operand: InfixOperation, operator: Operator) {
+        if (operand.operator === null) {
+            return false;
+        }
+
+        if ((!operator.displayLinear || !operand.operator.displayLinear)
+            && (operator !== multiplication || operand.operator !== multiplication)) {
+            return true;
+        }
+
+        return false;
+    }
 }
