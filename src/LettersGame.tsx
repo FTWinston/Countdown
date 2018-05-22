@@ -12,6 +12,7 @@ import { speak } from './Speech';
 import { TileSet } from './TileSet';
 
 export interface ILettersGameSettings {
+    game: 'LETTERS';
     minLetters: number;
     maxLetters: number;
     minConsonants: number;
@@ -20,7 +21,8 @@ export interface ILettersGameSettings {
     vowels: string[];
 }
 
-interface ILettersGameProps extends ILettersGameSettings {
+interface ILettersGameProps {
+    settings: ILettersGameSettings;
     endGame: () => void;
     audio: HTMLAudioElement;
 }
@@ -44,14 +46,14 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         super(props);
 
         this.state = {
-            consonantsAvailable: shuffle(this.props.consonants.slice()),
+            consonantsAvailable: shuffle(this.props.settings.consonants.slice()),
             letters: [],
             numConsonants: 0,
             numVowels: 0,
             solutions: [],
             state: GameState.Setup,
             timeLeft: 30,
-            vowelsAvailable: shuffle(this.props.vowels.slice()),
+            vowelsAvailable: shuffle(this.props.settings.vowels.slice()),
         };
     }
     
@@ -82,7 +84,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         return (
             <div className={screenClasses}>
                 {clock}
-                <TileSet text={this.state.letters} size={this.props.minLetters} />
+                <TileSet text={this.state.letters} size={this.props.settings.minLetters} />
                 {buttonsEtc}
             </div>
         );
@@ -92,22 +94,22 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         const addConsonant = () => this.addLetter(true);
         const addVowel = () => this.addLetter(false);
 
-        const lettersRemaining = this.props.minLetters - this.state.letters.length;
-        const needsAllConsonants = this.state.numConsonants < this.props.minConsonants
-            && (this.props.minConsonants - this.state.numConsonants) >= lettersRemaining;
-        const needsAllVowels = this.state.numVowels < this.props.minVowels
-            && (this.props.minVowels - this.state.numVowels) >= lettersRemaining;
+        const lettersRemaining = this.props.settings.minLetters - this.state.letters.length;
+        const needsAllConsonants = this.state.numConsonants < this.props.settings.minConsonants
+            && (this.props.settings.minConsonants - this.state.numConsonants) >= lettersRemaining;
+        const needsAllVowels = this.state.numVowels < this.props.settings.minVowels
+            && (this.props.settings.minVowels - this.state.numVowels) >= lettersRemaining;
 
         return (
             <div className="screen__actions">
                 <Button
                     text="Consonant"
-                    enabled={this.state.letters.length < this.props.maxLetters && !needsAllVowels}
+                    enabled={this.state.letters.length < this.props.settings.maxLetters && !needsAllVowels}
                     onClick={addConsonant}
                 />
                 <Button
                     text="Vowel"
-                    enabled={this.state.letters.length < this.props.maxLetters && !needsAllConsonants}
+                    enabled={this.state.letters.length < this.props.settings.maxLetters && !needsAllConsonants}
                     onClick={addVowel}
                 />
             </div>
@@ -189,7 +191,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
             const allLetters = prevState.letters.slice();
             allLetters.push(letter);
 
-            if (allLetters.length >= this.props.minLetters) {
+            if (allLetters.length >= this.props.settings.minLetters) {
                 this.startGame();
             }
 

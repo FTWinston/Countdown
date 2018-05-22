@@ -9,12 +9,14 @@ import './Screen.css';
 import { TileSet } from './TileSet';
 
 export interface IConundrumSettings {
+    game: 'CONUNDRUM';
     numLetters: number;
     word?: string;
     scrambled?: string;
 }
 
-interface IConundrumProps extends IConundrumSettings {
+interface IConundrumProps {
+    settings: IConundrumSettings;
     endGame: () => void;
     audio: HTMLAudioElement;
 }
@@ -42,7 +44,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     }
     
     public componentDidMount() {
-        if (this.props.word === undefined) {
+        if (this.props.settings.word === undefined) {
             this.worker = new Worker();
 
             this.worker.onmessage = (m) => {
@@ -53,16 +55,16 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
                 });
             };
             
-            this.worker.postMessage(['generate', this.props.numLetters]);
+            this.worker.postMessage(['generate', this.props.settings.numLetters]);
         }
         else {
-            const scrambled = this.props.scrambled === undefined
-                ? shuffle(this.props.word.split('')).join('')
-                : this.props.scrambled;
+            const scrambled = this.props.settings.scrambled === undefined
+                ? shuffle(this.props.settings.word.split('')).join('')
+                : this.props.settings.scrambled;
 
             this.setState({
                 conundrumLetters: scrambled.split(''),
-                solutionLetters: this.props.word.split(''),
+                solutionLetters: this.props.settings.word.split(''),
             });
         }
     }
@@ -111,11 +113,11 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
         return (
             <div className={screenClasses}>
                 {clock}
-                <TileSet text={this.state.state === GameState.Setup ? [] : this.state.conundrumLetters} size={this.props.numLetters} />
+                <TileSet text={this.state.state === GameState.Setup ? [] : this.state.conundrumLetters} size={this.props.settings.numLetters} />
                 <TileSet
                     className="tileset--solution"
                     text={this.state.state === GameState.Revealed ? this.state.solutionLetters : []}
-                    size={this.props.numLetters}
+                    size={this.props.settings.numLetters}
                 />
                 {buttonsEtc}
             </div>

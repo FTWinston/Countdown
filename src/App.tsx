@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { About } from './About';
-import { Conundrum } from './Conundrum';
+import { Conundrum, IConundrumSettings } from './Conundrum';
+import { defaultConundrumSettings, defaultGameSequence, defaultLettersSettings, defaultNumbersSettings, GameConfiguration } from './GameConfiguration';
 import { Interlude } from './Interlude';
-import { LettersGame } from './LettersGame';
-import { NumbersGame } from './NumbersGame';
+import { ILettersGameSettings, LettersGame } from './LettersGame';
+import { INumbersGameSettings, NumbersGame } from './NumbersGame';
+import { Settings } from './Settings';
 import { Welcome } from './Welcome';
 
 const enum AppScreen {
@@ -19,18 +21,10 @@ const enum AppScreen {
 interface IAppState {
     currentScreen: AppScreen;
     screenQueue: AppScreen[];
-    minLetters: number;
-    maxLetters: number;
-    minConsonants: number;
-    minVowels: number;
-    consonants: string[];
-    vowels: string[];
-    smallNumbers: number[];
-    bigNumbers: number[];
-    numberCount: number;
-    minTarget: number;
-    maxTarget: number;
-    conundrumSize: number;
+    lettersSettings: ILettersGameSettings;
+    numbersSettings: INumbersGameSettings;
+    conundrumSettings: IConundrumSettings;
+    sequenceSettings: GameConfiguration[];
 }
 
 class App extends React.PureComponent<{}, IAppState> {
@@ -42,48 +36,12 @@ class App extends React.PureComponent<{}, IAppState> {
         // TODO: letters should be weighted as per scrabble
         // TODO: letters game needs min 3 vowels and min 4 consonants. Store these values in app the state.
         this.state = {
-            bigNumbers: [25, 50, 75, 100],
-            consonants: [
-                'B', 'B',
-                'C', 'C', 'C',
-                'D', 'D', 'D', 'D', 'D', 'D',
-                'F', 'F',
-                'G', 'G', 'G',
-                'H', 'H',
-                'J',
-                'K',
-                'L', 'L', 'L', 'L', 'L',
-                'M', 'M', 'M', 'M',
-                'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N',
-                'P', 'P', 'P', 'P',
-                'Q',
-                'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
-                'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S',
-                'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T',
-                'V',
-                'W',
-                'X',
-                'Y',
-                'Z',
-            ],
-            conundrumSize: 9,
+            conundrumSettings: defaultConundrumSettings,
             currentScreen: AppScreen.Welcome,
-            maxLetters: 9,
-            maxTarget: 999,
-            minConsonants: 4,
-            minLetters: 9,
-            minTarget: 101,
-            minVowels: 3,
-            numberCount: 6,
+            lettersSettings: defaultLettersSettings,
+            numbersSettings: defaultNumbersSettings,
             screenQueue: [],
-            smallNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            vowels: [
-                'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A',
-                'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E',
-                'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I', 'I',
-                'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O',
-                'U', 'U', 'U', 'U', 'U',
-            ],
+            sequenceSettings: defaultGameSequence,
         };
     }
 
@@ -101,24 +59,30 @@ class App extends React.PureComponent<{}, IAppState> {
         const selectConundrum = () => this.startConundrum();
         const selectFullShow = () => this.startFullShow();
         const selectAbout = () => this.showAboutScreen();
-        
+        const selectSettings = () => this.showSettingsScreen();
+        const setLetters = (settings: ILettersGameSettings) => this.setLettersGameSettings(settings);
+        const setNumbers = (settings: INumbersGameSettings) => this.setNumbersGameSettings(settings);
+        const setConundrum = (settings: IConundrumSettings) => this.setConundrumSettings(settings);
+
         switch (this.state.currentScreen) {
             case AppScreen.Interlude:
                 return <Interlude endGame={nextScreen} key="screen" />;
             case AppScreen.Settings:
-                return <div key="screen">No configuration currently available</div>;
+                return (
+                    <Settings
+                        key="screen"
+                        setLettersSettings={setLetters}
+                        setNumbersSettings={setNumbers}
+                        setConundrumSettings={setConundrum}
+                    />
+                );
             case AppScreen.About:
                 return <About key="screen" goBack={nextScreen} />;
             case AppScreen.Letters:
                 return (
                     <LettersGame
                         key="screen"
-                        minLetters={this.state.minLetters}
-                        maxLetters={this.state.maxLetters}
-                        minConsonants={this.state.minConsonants}
-                        minVowels={this.state.minVowels}
-                        consonants={this.state.consonants}
-                        vowels={this.state.vowels}
+                        settings={this.state.lettersSettings}
                         endGame={nextScreen}
                         audio={this.audio}
                     />
@@ -127,11 +91,7 @@ class App extends React.PureComponent<{}, IAppState> {
                 return (
                     <NumbersGame
                         key="screen"
-                        numberCount={this.state.numberCount}
-                        minTarget={this.state.minTarget}
-                        maxTarget={this.state.maxTarget}
-                        smallNumbers={this.state.smallNumbers}
-                        bigNumbers={this.state.bigNumbers}
+                        settings={this.state.numbersSettings}
                         endGame={nextScreen}
                         audio={this.audio}
                     />
@@ -140,7 +100,7 @@ class App extends React.PureComponent<{}, IAppState> {
                 return (
                     <Conundrum
                         key="screen"
-                        numLetters={this.state.conundrumSize}
+                        settings={this.state.conundrumSettings}
                         endGame={nextScreen}
                         audio={this.audio}
                 />
@@ -154,6 +114,7 @@ class App extends React.PureComponent<{}, IAppState> {
                         selectConundrum={selectConundrum}
                         selectFullShow={selectFullShow}
                         selectAbout={selectAbout}
+                        selectSettings={selectSettings}
                     />
                 );
         }
@@ -198,6 +159,13 @@ class App extends React.PureComponent<{}, IAppState> {
         });
     }
 
+    private showSettingsScreen() {
+        this.setState({
+            currentScreen: AppScreen.Interlude,
+            screenQueue: [AppScreen.Settings],
+        });
+    }
+
     private startFullShow() {
         this.setState({
             currentScreen: AppScreen.Interlude,
@@ -235,6 +203,24 @@ class App extends React.PureComponent<{}, IAppState> {
             currentScreen: screen,
             screenQueue: queue,
         })
+    }
+
+    private setLettersGameSettings(settings: ILettersGameSettings) {
+        this.setState({
+            lettersSettings: settings,
+        });
+    }
+
+    private setNumbersGameSettings(settings: INumbersGameSettings) {
+        this.setState({
+            numbersSettings: settings,
+        });
+    }
+
+    private setConundrumSettings(settings: IConundrumSettings) {
+        this.setState({
+            conundrumSettings: settings,
+        });
     }
 }
 

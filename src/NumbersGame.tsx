@@ -13,6 +13,7 @@ import './Target.css';
 import { TileSet } from './TileSet';
 
 export interface INumbersGameSettings {
+    game: 'NUMBERS';
     smallNumbers: number[];
     bigNumbers: number[];
     numberCount: number;
@@ -20,7 +21,8 @@ export interface INumbersGameSettings {
     maxTarget: number;
 }
 
-interface INumbersGameProps extends INumbersGameSettings {
+interface INumbersGameProps {
+    settings: INumbersGameSettings;
     endGame: () => void;
     audio: HTMLAudioElement;
 }
@@ -83,7 +85,7 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             <div className={screenClasses}>
                 {clock}
                 {target}
-                <TileSet text={this.state.numbers.map(n => n.toString())} size={this.props.numberCount} />
+                <TileSet text={this.state.numbers.map(n => n.toString())} size={this.props.settings.numberCount} />
                 {buttonsEtc}
             </div>
         );
@@ -91,7 +93,7 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
 
     private renderSetup() {
         const buttons: JSX.Element[] = [];
-        for (let i = 0 ; i <= this.props.bigNumbers.length; i++) {
+        for (let i = 0 ; i <= this.props.settings.bigNumbers.length; i++) {
             const text = i === 1 ? '1 big number' : `${i} big numbers`;
             const action = () => this.chooseNumbers(i);
             
@@ -149,8 +151,8 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             hasChosen: true,
         });
 
-        const big = shuffle(this.props.bigNumbers.slice());
-        const small = shuffle(this.props.smallNumbers.slice());
+        const big = shuffle(this.props.settings.bigNumbers.slice());
+        const small = shuffle(this.props.settings.smallNumbers.slice());
 
         let numAdded = 0;
         for (numAdded=0; numAdded<numBig; numAdded++) {
@@ -158,12 +160,12 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
             this.addNumber(big.shift() as number);
         }
 
-        for (numAdded; numAdded<this.props.numberCount; numAdded++) {
+        for (numAdded; numAdded<this.props.settings.numberCount; numAdded++) {
             await delay(1250);
             this.addNumber(small.shift() as number);
         }
 
-        const targetValue = randomInt(this.props.minTarget, this.props.maxTarget + 1);
+        const targetValue = randomInt(this.props.settings.minTarget, this.props.settings.maxTarget + 1);
         speak('and your target is', true);
         speak(targetValue.toString(), false);
 

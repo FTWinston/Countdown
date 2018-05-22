@@ -9,6 +9,7 @@ interface IWelcomeProps {
     selectConundrum: () => void;
     selectFullShow: () => void;
     selectAbout: () => void;
+    selectSettings: () => void;
 }
 
 export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
@@ -27,6 +28,7 @@ export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
         const selectConundrum = () => this.props.selectConundrum();
         const selectFull = () => this.props.selectFullShow();
         const selectAbout = () => this.props.selectAbout();
+        const selectSettings = () => this.props.selectSettings();
 
         return (
             <div className="screen__actions">
@@ -52,8 +54,8 @@ export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
                 />
                 <Button
                     text="⛭"
-                    enabled={false}
-                    onClick={selectFull}
+                    enabled={true}
+                    onClick={selectSettings}
                 />
                 <Button
                     text="?"

@@ -7,7 +7,7 @@ it('gets a solution', () => {
 
 it('removes multiplicative brackets', () => {
     const results = solve(304, [2, 4, 1, 4, 3, 9]);
-    console.log(`got ${results[0]}: ${results[1]}`); // 3 ((9 x 2) + 1) x 4 x 4
+    console.log(`got ${results[0]}: ${results[1]}`); // ((9 x 2) + 1) x 4 x 4
 });
 
 it('writes an expression with unused element on the start', () => {
