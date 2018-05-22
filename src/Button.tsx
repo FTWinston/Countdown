@@ -4,7 +4,7 @@ import './Button.css';
 interface IButtonProps {
     text: string;
     enabled: boolean;
-    onClick: () => void;
+    onClick?: () => void;
     className?: string;
 }
 

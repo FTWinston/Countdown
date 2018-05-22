@@ -146,12 +146,17 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
                     enabled={true}
                     onClick={pause}
                 />
+                <Button
+                    text="Reveal"
+                    enabled={false}
+                />
             </div>
         );
     }
 
     private renderResume() {
         const resume = () => this.resumeGame();
+        const reveal = () => this.setState({ state: GameState.Revealed });
 
         return (
             <div className="screen__actions">
@@ -159,6 +164,11 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
                     text="Resume"
                     enabled={true}
                     onClick={resume}
+                />
+                <Button
+                    text="Reveal"
+                    enabled={true}
+                    onClick={reveal}
                 />
             </div>
         );

@@ -185,3 +185,7 @@
         "solution solution"
         "actions clock";
 }
+
+.screen--conundrum.screen--active .screen__actions {
+    grid-template-columns: 1fr 1fr;
+}
