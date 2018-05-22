@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { About } from './About';
+import { defaultSettingsName } from './Constants';
 import { Conundrum, IConundrumSettings } from './Conundrum';
-import { defaultConundrumSettings, defaultGameSequence, defaultLettersSettings, defaultNumbersSettings, GameConfiguration } from './GameConfiguration';
+import { defaultConundrumSettings, defaultGameSequence, defaultLettersSettings, defaultNumbersSettings, GameSettings } from './GameSettings';
 import { Interlude } from './Interlude';
 import { ILettersGameSettings, LettersGame } from './LettersGame';
 import { INumbersGameSettings, NumbersGame } from './NumbersGame';
@@ -21,10 +22,10 @@ const enum AppScreen {
 interface IAppState {
     currentScreen: AppScreen;
     screenQueue: AppScreen[];
-    lettersSettings: ILettersGameSettings;
-    numbersSettings: INumbersGameSettings;
-    conundrumSettings: IConundrumSettings;
-    sequenceSettings: GameConfiguration[];
+    lettersSettings: [string, ILettersGameSettings];
+    numbersSettings: [string, INumbersGameSettings];
+    conundrumSettings: [string, IConundrumSettings];
+    sequenceSettings: GameSettings[];
 }
 
 class App extends React.PureComponent<{}, IAppState> {
@@ -36,10 +37,10 @@ class App extends React.PureComponent<{}, IAppState> {
         // TODO: letters should be weighted as per scrabble
         // TODO: letters game needs min 3 vowels and min 4 consonants. Store these values in app the state.
         this.state = {
-            conundrumSettings: defaultConundrumSettings,
+            conundrumSettings: [defaultSettingsName, defaultConundrumSettings],
             currentScreen: AppScreen.Welcome,
-            lettersSettings: defaultLettersSettings,
-            numbersSettings: defaultNumbersSettings,
+            lettersSettings: [defaultSettingsName, defaultLettersSettings],
+            numbersSettings: [defaultSettingsName, defaultNumbersSettings],
             screenQueue: [],
             sequenceSettings: defaultGameSequence,
         };
@@ -60,9 +61,9 @@ class App extends React.PureComponent<{}, IAppState> {
         const selectFullShow = () => this.startFullShow();
         const selectAbout = () => this.showAboutScreen();
         const selectSettings = () => this.showSettingsScreen();
-        const setLetters = (settings: ILettersGameSettings) => this.setLettersGameSettings(settings);
-        const setNumbers = (settings: INumbersGameSettings) => this.setNumbersGameSettings(settings);
-        const setConundrum = (settings: IConundrumSettings) => this.setConundrumSettings(settings);
+        const setLetters = (name: string, settings: ILettersGameSettings) => this.setLettersGameSettings(name, settings);
+        const setNumbers = (name: string, settings: INumbersGameSettings) => this.setNumbersGameSettings(name, settings);
+        const setConundrum = (name: string, settings: IConundrumSettings) => this.setConundrumSettings(name, settings);
 
         switch (this.state.currentScreen) {
             case AppScreen.Interlude:
@@ -74,6 +75,7 @@ class App extends React.PureComponent<{}, IAppState> {
                         setLettersSettings={setLetters}
                         setNumbersSettings={setNumbers}
                         setConundrumSettings={setConundrum}
+                        goBack={nextScreen}
                     />
                 );
             case AppScreen.About:
@@ -82,7 +84,7 @@ class App extends React.PureComponent<{}, IAppState> {
                 return (
                     <LettersGame
                         key="screen"
-                        settings={this.state.lettersSettings}
+                        settings={this.state.lettersSettings[1]}
                         endGame={nextScreen}
                         audio={this.audio}
                     />
@@ -91,7 +93,7 @@ class App extends React.PureComponent<{}, IAppState> {
                 return (
                     <NumbersGame
                         key="screen"
-                        settings={this.state.numbersSettings}
+                        settings={this.state.numbersSettings[1]}
                         endGame={nextScreen}
                         audio={this.audio}
                     />
@@ -100,7 +102,7 @@ class App extends React.PureComponent<{}, IAppState> {
                 return (
                     <Conundrum
                         key="screen"
-                        settings={this.state.conundrumSettings}
+                        settings={this.state.conundrumSettings[1]}
                         endGame={nextScreen}
                         audio={this.audio}
                 />
@@ -205,21 +207,21 @@ class App extends React.PureComponent<{}, IAppState> {
         })
     }
 
-    private setLettersGameSettings(settings: ILettersGameSettings) {
+    private setLettersGameSettings(name: string, settings: ILettersGameSettings) {
         this.setState({
-            lettersSettings: settings,
+            lettersSettings: [name, settings],
         });
     }
 
-    private setNumbersGameSettings(settings: INumbersGameSettings) {
+    private setNumbersGameSettings(name: string, settings: INumbersGameSettings) {
         this.setState({
-            numbersSettings: settings,
+            numbersSettings: [name, settings],
         });
     }
 
-    private setConundrumSettings(settings: IConundrumSettings) {
+    private setConundrumSettings(name: string, settings: IConundrumSettings) {
         this.setState({
-            conundrumSettings: settings,
+            conundrumSettings: [name, settings],
         });
     }
 }

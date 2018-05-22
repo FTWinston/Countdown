@@ -2,7 +2,7 @@ import { IConundrumSettings } from './Conundrum';
 import { ILettersGameSettings } from './LettersGame';
 import { INumbersGameSettings } from './NumbersGame';
 
-export type GameConfiguration = ILettersGameSettings | INumbersGameSettings | IConundrumSettings;
+export type GameSettings = ILettersGameSettings | INumbersGameSettings | IConundrumSettings;
 
 export const defaultLettersSettings: ILettersGameSettings = {
     consonants: [
@@ -56,7 +56,7 @@ export const defaultConundrumSettings: IConundrumSettings = {
     numLetters: 9,
 };
 
-export const defaultGameSequence: GameConfiguration[] = [
+export const defaultGameSequence: GameSettings[] = [
     defaultLettersSettings,
     defaultLettersSettings,
     defaultNumbersSettings,
