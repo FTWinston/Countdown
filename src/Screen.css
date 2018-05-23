@@ -35,6 +35,11 @@
 .screen__text {
     margin: 0 2em;
     overflow-y: auto;
+    
+    background-color: #9bf;
+    padding: 1em;
+    border-radius: 1em;
+    font-size: 1.25em;
 }
 
 .screen--about {
@@ -114,6 +119,10 @@
     grid-template-rows: 1fr;
 }
 
+.screen--letters.screen.screen--setup .screen__actions {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
 @media only screen and (max-aspect-ratio: 1/1) {
     .screen--letters .screen__actions, .screen--numbers.screen--finished .screen__actions {
         grid-template-columns: 1fr;
@@ -188,4 +197,17 @@
 
 .screen--conundrum.screen--active .screen__actions {
     grid-template-columns: 1fr 1fr;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+* + p {
+    margin-top: 1.5em;
 }

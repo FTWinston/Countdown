@@ -65,6 +65,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         let buttonsEtc: JSX.Element | undefined;
         switch (this.state.state) {
             case GameState.Setup:
+            case GameState.Paused:
                 screenClasses += ' screen--setup';
                 buttonsEtc = this.renderSetup();
                 break;
@@ -93,12 +94,28 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     private renderSetup() {
         const addConsonant = () => this.addLetter(true);
         const addVowel = () => this.addLetter(false);
+        const startGame = () => {
+            this.setState({
+                state: GameState.Paused,
+            });
+            this.startGame();
+        };
 
         const lettersRemaining = this.props.settings.minLetters - this.state.letters.length;
         const needsAllConsonants = this.state.numConsonants < this.props.settings.minConsonants
             && (this.props.settings.minConsonants - this.state.numConsonants) >= lettersRemaining;
         const needsAllVowels = this.state.numVowels < this.props.settings.minVowels
             && (this.props.settings.minVowels - this.state.numVowels) >= lettersRemaining;
+
+        const startButton = lettersRemaining > 0 || this.state.state !== GameState.Setup
+            ? undefined
+            : (
+                <Button
+                    text="Start game"
+                    enabled={true}
+                    onClick={startGame}
+                />
+            )
 
         return (
             <div className="screen__actions">
@@ -112,6 +129,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
                     enabled={this.state.letters.length < this.props.settings.maxLetters && !needsAllConsonants}
                     onClick={addVowel}
                 />
+                {startButton}
             </div>
         );
     }
@@ -191,12 +209,18 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
             const allLetters = prevState.letters.slice();
             allLetters.push(letter);
 
-            if (allLetters.length >= this.props.settings.minLetters) {
+            if (allLetters.length >= this.props.settings.maxLetters) {
                 this.startGame();
+
+                return {
+                    letters: allLetters,
+                    state: GameState.Paused,
+                };
             }
 
             return {
                 letters: allLetters,
+                state: prevState.state,
             };
         });
     }

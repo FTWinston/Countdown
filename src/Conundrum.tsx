@@ -30,7 +30,7 @@ interface IConundrumState {
 
 export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumState> {
     private timerID: number;
-    private worker: Worker;
+    private worker?: Worker;
 
     constructor(props: IConundrumProps) {
         super(props);
@@ -206,7 +206,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
 
     private tryStartGame() {
         // don't start until we have a conundrum. Wait for the worker...
-        if (this.state.conundrumLetters.length === 0) {
+        if (this.worker !== undefined && this.state.conundrumLetters.length === 0) {
             this.worker.postMessage(['respond', 0]);
 
             this.setState({
@@ -219,7 +219,9 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     }
 
     private startGame() {
-        this.worker.terminate();
+        if (this.worker !== undefined) {
+            this.worker.terminate();
+        }
 
         this.props.audio.currentTime = musicStartPosition;
         this.props.audio.play();

@@ -7,18 +7,19 @@ button {
     padding: 1em;
     font-size: 2em;
     cursor: pointer;
-    transition: background-color 0.25s;
+    transition: background-color 0.25s, border-color 0.25s;
+}
+
+button:focus, button:hover {
+    outline: none;
+    background-color: #eee;
+    border-color: #00c;
 }
 
 button[disabled] {
     background-color: #999;
     border-color: #999;
     cursor: not-allowed;
-}
-
-button:focus, button:hover {
-    outline: none;
-    background-color: #eee;
 }
 
 button.button--short {
