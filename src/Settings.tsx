@@ -8,7 +8,7 @@ import { ILettersGameSettings } from './LettersGame';
 import { LettersSettings } from './LettersSettings';
 import { INumbersGameSettings } from './NumbersGame';
 import { NumbersSettings } from './NumbersSettings';
-import './Screen.css';
+import './Settings.css';
 
 interface ISettingsProps {
     setLettersSettings: (name: string, settings: ILettersGameSettings) => void;
@@ -96,16 +96,27 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         });
 
         return (
-            <div className="screen__section">
-                {sectionName} settings
+            <div className="settingsSection">
+                <div className="settingsSection__nameAndSelect">
+                    <div className="settingsSection__name">{sectionName} settings</div>
+                    <select className="settingsSection__select" value={selectedSettingsName} onChange={changeSelected}>
+                        {options}
+                    </select>
+                </div>
                 &nbsp;
-                <select value={selectedSettingsName} onChange={changeSelected}>
-                    {options}
-                </select>
+                <Button
+                    text="Edit"
+                    onClick={showEdit}
+                    enabled={selectedSettingsName !== defaultSettingsName}
+                    className="button--short"
+                />
                 &nbsp;
-                <Button enabled={selectedSettingsName !== defaultSettingsName} text="Edit" onClick={showEdit} />
-                &nbsp;
-                <Button enabled={true} text="Add new" onClick={showNew} />
+                <Button
+                    text="Add new"
+                    onClick={showNew}
+                    enabled={true}
+                    className="button--short"
+                />
             </div>
         );
     }

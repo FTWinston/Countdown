@@ -1,0 +1,18 @@
+.settingsSection {
+    display: flex;
+}
+
+.settingsSection__nameAndSelect {
+    display: flex;
+    flex-direction: column;
+    width: 20em;
+}
+
+.settingsSection__name {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.settingsSection__select {
+    font-size: 2em;
+}
