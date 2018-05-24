@@ -11,22 +11,12 @@
     grid-area: solution;
 }
 
-.tileset--size3, .tileset--size2, .tileset--size1 {
-  font-size: 21vw;
-}
-
-.tileset--size4 {
-  font-size: 15.75vw;
-}
-
-.tileset--size5 {
-  font-size: 12.6vw;
-}
-
-.tileset--size6 {
-  font-size: 10.5vw;
-}
-
+.tileset--size1,
+.tileset--size2,
+.tileset--size3,
+.tileset--size4,
+.tileset--size5,
+.tileset--size6,
 .tileset--size7 {
   font-size: 9vw;
 }
