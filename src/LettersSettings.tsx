@@ -9,6 +9,7 @@ interface ILettersSettingsProps {
     settingsName?: string;
     cancel: () => void;
     save: (name: string) => void;
+    delete: () => void;
 }
 
 interface ILettersSettingsState {
@@ -67,6 +68,8 @@ export class LettersSettings extends React.PureComponent<ILettersSettingsProps, 
 
         const cancel = () => this.props.cancel();
         const save = () => this.save();
+        const deleteThis = () => this.props.delete();
+
         return (
             <div className="screen screen--editLetters">
                 <div className="settingsSection">
@@ -133,6 +136,7 @@ export class LettersSettings extends React.PureComponent<ILettersSettingsProps, 
                 <div className="settingsSection">
                     <Button enabled={this.canSave()} text="Save" onClick={save} />
                     <Button enabled={true} text="Cancel" onClick={cancel} />
+                    <Button enabled={this.props.settingsName !== undefined} text="Delete" onClick={deleteThis} />
                 </div>
             </div>
         );

@@ -199,6 +199,14 @@
     grid-template-columns: 1fr 1fr;
 }
 
+.screen--settings, .screen--editNumbers, .screen--editLetters, .screen--editConundrum {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    justify-content: space-around;
+    height: initial;
+}
+
 p {
     margin-top: 0;
     margin-bottom: 0.5em;

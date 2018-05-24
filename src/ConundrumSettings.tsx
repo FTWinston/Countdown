@@ -9,6 +9,7 @@ interface IConundrumSettingsProps {
     settings: IConundrumSettings;
     cancel: () => void;
     save: (name: string) => void;
+    delete: () => void;
 }
 
 interface IConundrumSettingsState {
@@ -46,6 +47,8 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
 
         const cancel = () => this.props.cancel();
         const save = () => this.save();
+        const deleteThis = () => this.props.delete();
+
         return (
             <div className="screen screen--editConundrum">
                 <div className="settingsSection">
@@ -70,6 +73,7 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
                 <div className="settingsSection">
                     <Button enabled={this.canSave()} text="Save" onClick={save} />
                     <Button enabled={true} text="Cancel" onClick={cancel} />
+                    <Button enabled={this.props.settingsName !== undefined} text="Delete" onClick={deleteThis} />
                 </div>
             </div>
         );

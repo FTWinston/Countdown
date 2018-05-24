@@ -9,6 +9,7 @@ interface INumbersSettingsProps {
     settingsName?: string;
     cancel: () => void;
     save: (name: string) => void;
+    delete: () => void;
 }
 
 interface INumbersSettingsState {
@@ -61,6 +62,8 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
         
         const cancel = () => this.props.cancel();
         const save = () => this.save();
+        const deleteThis = () => this.props.delete();
+
         return (
             <div className="screen screen--editNumbers">
                 <div className="settingsSection">
@@ -117,6 +120,7 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
                 <div className="settingsSection">
                     <Button enabled={this.canSave()} text="Save" onClick={save} />
                     <Button enabled={true} text="Cancel" onClick={cancel} />
+                    <Button enabled={this.props.settingsName !== undefined} text="Delete" onClick={deleteThis} />
                 </div>
             </div>
         );
