@@ -141,7 +141,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         });
 
         return (
-            <div className="settingsSection">
+            <div className="settingsSection settingsSection--main">
                 <div className="settingsSection__nameAndSelect screen__text">
                     <div className="settingsSection__name">{sectionName} settings</div>
                     <select className="settingsSection__select" value={selectedSettingsName} onChange={changeSelected}>
@@ -225,7 +225,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         if (this.state.editingSettings === undefined) {
             return;
         }
-        
+
         switch(this.state.editingSettings.game) {
             case 'LETTERS':
                 this.saveDeleteLetters();

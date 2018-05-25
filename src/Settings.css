@@ -5,6 +5,25 @@
     margin: 0.5em 0;
 }
 
+.settingsSection--main {
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 950px) {
+    .settingsSection--main {
+        font-size: 1.65vw;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .settingsSection--main {
+        flex-wrap: wrap;
+        margin-bottom: 3em;
+        font-size: 3vw;
+    }
+}
+
 .settingsSection--vertical {
     flex-direction: column;
     align-items: center;
