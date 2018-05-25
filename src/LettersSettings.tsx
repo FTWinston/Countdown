@@ -72,12 +72,12 @@ export class LettersSettings extends React.PureComponent<ILettersSettingsProps, 
 
         return (
             <div className="screen screen--editLetters">
-                <div className="settingsSection">
+                <div className="settingsSection settingsSection--name">
                     <div className="settingsSection__name">Editing letters game: </div>
                     <input type="text" className="settingsSection__input" placeholder="(enter name)" value={this.state.name} onChange={setName} />
                 </div>
                 
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>Minimum number of letters allowed</p>
                     <input type="number"
                         className="settingsSection__input"
@@ -95,7 +95,7 @@ export class LettersSettings extends React.PureComponent<ILettersSettingsProps, 
                     />
                 </div>
                 
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>Minimum number of consonants allowed</p>
                     <input type="number"
                         className="settingsSection__input"
@@ -113,27 +113,27 @@ export class LettersSettings extends React.PureComponent<ILettersSettingsProps, 
                     />
                 </div>
 
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>Specify the distribution of consonants to use</p>
                     <textarea
-                        className="settingsSection__input"
+                        className="settingsSection__input settingsSection__input--letters"
                         placeholder="(enter values)"
                         value={this.state.consonants.join('')}
                         onChange={setConsonants}
                     />
                 </div>
 
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>Specify the distribution of vowels to use</p>
                     <textarea
-                        className="settingsSection__input"
+                        className="settingsSection__input settingsSection__input--letters"
                         placeholder="(enter values)"
                         value={this.state.vowels.join('')}
                         onChange={setVowels}
                     />
                 </div>
                 
-                <div className="settingsSection">
+                <div className="settingsSection settingsSection--actions">
                     <Button enabled={this.canSave()} text="Save" onClick={save} />
                     <Button enabled={true} text="Cancel" onClick={cancel} />
                     <Button enabled={this.props.settingsName !== undefined} text="Delete" onClick={deleteThis} />

@@ -66,12 +66,12 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
 
         return (
             <div className="screen screen--editNumbers">
-                <div className="settingsSection">
+                <div className="settingsSection settingsSection--name">
                     <div className="settingsSection__name">Editing numbers game: </div>
                     <input type="text" className="settingsSection__input" placeholder="(enter name)" value={this.state.name} onChange={setName} />
                 </div>
 
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>How many numbers do the players get?</p>
                     <input type="number"
                         className="settingsSection__input"
@@ -97,7 +97,7 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
                     />
                 </div>
 
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>Specify all the big numbers, with a space between each</p>
                     <textarea
                         className="settingsSection__input"
@@ -107,7 +107,7 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
                     />
                 </div>
                 
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>Specify all the small numbers, with a space between each</p>
                     <textarea
                         className="settingsSection__input"
@@ -117,7 +117,7 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
                     />
                 </div>
                 
-                <div className="settingsSection">
+                <div className="settingsSection settingsSection--actions">
                     <Button enabled={this.canSave()} text="Save" onClick={save} />
                     <Button enabled={true} text="Cancel" onClick={cancel} />
                     <Button enabled={this.props.settingsName !== undefined} text="Delete" onClick={deleteThis} />

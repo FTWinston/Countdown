@@ -51,11 +51,11 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
 
         return (
             <div className="screen screen--editConundrum">
-                <div className="settingsSection">
+                <div className="settingsSection settingsSection--name">
                     <div className="settingsSection__name">Editing conundrum: </div>
                     <input type="text" className="settingsSection__input" placeholder="(enter name)" value={this.state.name} onChange={setName} />
                 </div>
-                <div className="settingsSection settingsSection--vertical screen__text">
+                <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                     <p>Should this conundrum pick a word itself, or use a specific word?</p>
                     <div>
                         <label className="settings__option">
@@ -70,7 +70,7 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
                 </div>
                 {this.state.useGivenWord ? this.renderWordSection() : this.renderLengthSection()}
                 
-                <div className="settingsSection">
+                <div className="settingsSection settingsSection--actions">
                     <Button enabled={this.canSave()} text="Save" onClick={save} />
                     <Button enabled={true} text="Cancel" onClick={cancel} />
                     <Button enabled={this.props.settingsName !== undefined} text="Delete" onClick={deleteThis} />
@@ -88,7 +88,7 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
         }
 
         return (
-            <div className="settingsSection settingsSection--vertical screen__text">
+            <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                 <p>How many letters should this conundrum word have?</p>
                 {options}
             </div>
@@ -105,7 +105,7 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
         });
 
         return (
-            <div className="settingsSection settingsSection--vertical screen__text">
+            <div className="settingsSection settingsSection--vertical settingsSection--detail screen__text">
                 <p>Enter the solution word.</p>
                 <input type="text"
                     className="settingsSection__input"
