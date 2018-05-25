@@ -158,6 +158,18 @@
         "tiles tiles";
 }
 
+@media only screen and (orientation: portrait) {
+    .screen--numbers.screen--active {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr 1fr;
+
+        grid-template-areas:
+            "clock"
+            "target"
+            "tiles";
+    }
+}
+
 @media only screen and (max-width: 800px) {
     .screen--numbers .screen__actions {
         font-size: 1.5vw;
@@ -188,11 +200,24 @@
 }
 
 .screen--conundrum.screen--active {
+    grid-template-rows: 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
         "tiles tiles"
         "solution solution"
         "actions clock";
+}
+
+@media only screen and (orientation: portrait) {
+    .screen--conundrum.screen--active {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        grid-template-areas:
+            "tiles"
+            "solution"
+            "clock"
+            "actions";
+    }
 }
 
 .screen--conundrum.screen--active .screen__actions {
