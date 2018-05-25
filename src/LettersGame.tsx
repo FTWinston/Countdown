@@ -4,22 +4,13 @@ import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
 import { delay } from './Delay';
+import { ILettersGameSettings } from './GameSettings';
 import { GameState } from './GameState';
 import { shuffle } from './Random';
 import './Screen.css';
 import './Solution.css';
 import { speak } from './Speech';
 import { TileSet } from './TileSet';
-
-export interface ILettersGameSettings {
-    game: 'LETTERS';
-    minLetters: number;
-    maxLetters: number;
-    minConsonants: number;
-    minVowels: number;
-    consonants: string[];
-    vowels: string[];
-}
 
 interface ILettersGameProps {
     settings: ILettersGameSettings;

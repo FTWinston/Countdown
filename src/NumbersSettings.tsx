@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { defaultSettingsName } from './Constants';
-import { INumbersGameSettings } from './NumbersGame';
+import { INumbersGameSettings } from './GameSettings';
 import './Screen.css';
 
 interface INumbersSettingsProps {
     settings: INumbersGameSettings;
     settingsName?: string;
     cancel: () => void;
-    save: (name: string) => void;
+    save: () => void;
     delete: () => void;
 }
 
@@ -146,12 +146,13 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
     private save() {
         const settings = this.props.settings;
         
+        settings.name = this.state.name;
         settings.numberCount = this.state.numberCount;
         settings.minTarget = this.state.minTarget;
         settings.maxTarget = this.state.maxTarget;
         settings.bigNumbers = this.state.bigNumbers;
         settings.smallNumbers = this.state.smallNumbers;
         
-        this.props.save(this.state.name);
+        this.props.save();
     }
 }

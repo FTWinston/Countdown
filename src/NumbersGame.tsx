@@ -4,6 +4,7 @@ import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
 import { delay } from './Delay';
+import { INumbersGameSettings } from './GameSettings';
 import { GameState } from './GameState';
 import { randomInt, shuffle } from './Random';
 import './Screen.css';
@@ -11,15 +12,6 @@ import './Solution.css';
 import { speak } from './Speech';
 import './Target.css';
 import { TileSet } from './TileSet';
-
-export interface INumbersGameSettings {
-    game: 'NUMBERS';
-    smallNumbers: number[];
-    bigNumbers: number[];
-    numberCount: number;
-    minTarget: number;
-    maxTarget: number;
-}
 
 interface INumbersGameProps {
     settings: INumbersGameSettings;

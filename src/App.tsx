@@ -1,31 +1,23 @@
 import * as React from 'react';
 import { About } from './About';
-import { defaultSettingsName } from './Constants';
-import { Conundrum, IConundrumSettings } from './Conundrum';
-import { defaultConundrumSettings, defaultGameSequence, defaultLettersSettings, defaultNumbersSettings, GameSettings } from './GameSettings';
+import { Conundrum } from './Conundrum';
+import { defaultConundrumSettings, defaultGameSequence, defaultLettersSettings, defaultNumbersSettings } from './DefaultSettings';
+import { AppScreen, Game } from './Enums';
+import { GameSettings, IConundrumSettings, ILettersGameSettings, INumbersGameSettings } from './GameSettings';
 import { Interlude } from './Interlude';
-import { ILettersGameSettings, LettersGame } from './LettersGame';
-import { INumbersGameSettings, NumbersGame } from './NumbersGame';
+import { LettersGame } from './LettersGame';
+import { NumbersGame } from './NumbersGame';
 import { Settings } from './Settings';
 import { Welcome } from './Welcome';
 
-const enum AppScreen {
-    Welcome,
-    Settings,
-    About,
-    Letters,
-    Numbers,
-    Conundrum,
-    Interlude,
-}
-
 interface IAppState {
     currentScreen: AppScreen;
-    screenQueue: AppScreen[];
-    lettersSettings: [string, ILettersGameSettings];
-    numbersSettings: [string, INumbersGameSettings];
-    conundrumSettings: [string, IConundrumSettings];
+    gameQueue: GameSettings[];
+    lettersSettings: ILettersGameSettings;
+    numbersSettings: INumbersGameSettings;
+    conundrumSettings: IConundrumSettings;
     sequenceSettings: GameSettings[];
+    currentGame?: GameSettings;
 }
 
 class App extends React.PureComponent<{}, IAppState> {
@@ -34,14 +26,12 @@ class App extends React.PureComponent<{}, IAppState> {
     constructor(props: {}) {
         super(props);
 
-        // TODO: letters should be weighted as per scrabble
-        // TODO: letters game needs min 3 vowels and min 4 consonants. Store these values in app the state.
         this.state = {
-            conundrumSettings: [defaultSettingsName, defaultConundrumSettings],
+            conundrumSettings: defaultConundrumSettings,
             currentScreen: AppScreen.Welcome,
-            lettersSettings: [defaultSettingsName, defaultLettersSettings],
-            numbersSettings: [defaultSettingsName, defaultNumbersSettings],
-            screenQueue: [],
+            gameQueue: [],
+            lettersSettings: defaultLettersSettings,
+            numbersSettings: defaultNumbersSettings,
             sequenceSettings: defaultGameSequence,
         };
     }
@@ -54,20 +44,21 @@ class App extends React.PureComponent<{}, IAppState> {
     }
 
     private renderScreen() {
-        const nextScreen = () => this.advanceToNextScreen();
-        const selectLetters = () => this.startLetters();
-        const selectNumbers = () => this.startNumbers();
-        const selectConundrum = () => this.startConundrum();
+        const nextGame = () => this.showNextGameOrWelcome();
+        const selectLetters = () => this.showGame(this.state.lettersSettings);
+        const selectNumbers = () => this.showGame(this.state.numbersSettings);
+        const selectConundrum = () => this.showGame(this.state.conundrumSettings);
         const selectFullShow = () => this.startFullShow();
-        const selectAbout = () => this.showAboutScreen();
-        const selectSettings = () => this.showSettingsScreen();
-        const setLetters = (name: string, settings: ILettersGameSettings) => this.setLettersGameSettings(name, settings);
-        const setNumbers = (name: string, settings: INumbersGameSettings) => this.setNumbersGameSettings(name, settings);
-        const setConundrum = (name: string, settings: IConundrumSettings) => this.setConundrumSettings(name, settings);
+        const selectAbout = () => this.showScreen(AppScreen.About);
+        const selectSettings = () => this.showScreen(AppScreen.Settings);
+        const showWelcome = () => this.showScreen(AppScreen.Welcome);
+        const setLetters = (settings: ILettersGameSettings) => this.setLettersGameSettings(settings);
+        const setNumbers = (settings: INumbersGameSettings) => this.setNumbersGameSettings(settings);
+        const setConundrum = (settings: IConundrumSettings) => this.setConundrumSettings(settings);
 
         switch (this.state.currentScreen) {
             case AppScreen.Interlude:
-                return <Interlude endGame={nextScreen} key="screen" />;
+                return <Interlude key="screen" />;
             case AppScreen.Settings:
                 return (
                     <Settings
@@ -75,38 +66,43 @@ class App extends React.PureComponent<{}, IAppState> {
                         setLettersSettings={setLetters}
                         setNumbersSettings={setNumbers}
                         setConundrumSettings={setConundrum}
-                        goBack={nextScreen}
+                        goBack={showWelcome}
                     />
                 );
             case AppScreen.About:
-                return <About key="screen" goBack={nextScreen} />;
-            case AppScreen.Letters:
-                return (
-                    <LettersGame
-                        key="screen"
-                        settings={this.state.lettersSettings[1]}
-                        endGame={nextScreen}
-                        audio={this.audio}
-                    />
-                );
-            case AppScreen.Numbers:
-                return (
-                    <NumbersGame
-                        key="screen"
-                        settings={this.state.numbersSettings[1]}
-                        endGame={nextScreen}
-                        audio={this.audio}
-                    />
-                );
-            case AppScreen.Conundrum:
-                return (
-                    <Conundrum
-                        key="screen"
-                        settings={this.state.conundrumSettings[1]}
-                        endGame={nextScreen}
-                        audio={this.audio}
-                />
-            );
+                return <About key="screen" goBack={showWelcome} />;
+            case AppScreen.Game:
+                if (this.state.currentGame !== undefined) {
+                    switch (this.state.currentGame.game) {            
+                        case Game.Letters:
+                            return (
+                                <LettersGame
+                                    key="screen"
+                                    settings={this.state.lettersSettings}
+                                    endGame={nextGame}
+                                    audio={this.audio}
+                                />
+                            );
+                        case Game.Numbers:
+                            return (
+                                <NumbersGame
+                                    key="screen"
+                                    settings={this.state.numbersSettings}
+                                    endGame={nextGame}
+                                    audio={this.audio}
+                                />
+                            );
+                        case Game.Conundrum:
+                            return (
+                                <Conundrum
+                                    key="screen"
+                                    settings={this.state.conundrumSettings}
+                                    endGame={nextGame}
+                                    audio={this.audio}
+                            />
+                        );
+                    }
+                }
             default:
                 return (
                     <Welcome
@@ -133,95 +129,59 @@ class App extends React.PureComponent<{}, IAppState> {
         )
     }
 
-    private startLetters() {
-        this.setState({
-            currentScreen: AppScreen.Interlude,
-            screenQueue: [AppScreen.Letters],
-        });
+    private showScreen(screen: AppScreen) {
+        this.setState({ currentScreen: AppScreen.Interlude });
+
+        if (screen !== AppScreen.Game) {
+            this.setState({ currentGame: undefined });
+        }
+
+        window.setTimeout(() => this.setState({ currentScreen: screen }), 750);
     }
 
-    private startNumbers() {
-        this.setState({
-            currentScreen: AppScreen.Interlude,
-            screenQueue: [AppScreen.Numbers],
-        });
-    }
-
-    private startConundrum() {
-        this.setState({
-            currentScreen: AppScreen.Interlude,
-            screenQueue: [AppScreen.Conundrum],
-        });
-    }
-
-    private showAboutScreen() {
-        this.setState({
-            currentScreen: AppScreen.Interlude,
-            screenQueue: [AppScreen.About],
-        });
-    }
-
-    private showSettingsScreen() {
-        this.setState({
-            currentScreen: AppScreen.Interlude,
-            screenQueue: [AppScreen.Settings],
-        });
+    private showGame(settings: GameSettings) {
+        this.setState({ currentGame: settings });
+        this.showScreen(AppScreen.Game);
     }
 
     private startFullShow() {
+        const sequence = this.state.sequenceSettings.slice();
+        const firstGame = sequence.shift() as GameSettings;
+
         this.setState({
-            currentScreen: AppScreen.Interlude,
-            screenQueue: [
-                AppScreen.Letters,
-                AppScreen.Letters,
-                AppScreen.Numbers,
-                AppScreen.Letters,
-                AppScreen.Letters,
-                AppScreen.Numbers,
-                AppScreen.Conundrum,
-            ],
+            gameQueue: sequence,
         });
+        this.showGame(firstGame);
     }
 
-    private advanceToNextScreen() {
-        if (this.state.currentScreen !== AppScreen.Interlude) {
-            this.setState({
-                currentScreen: AppScreen.Interlude,
-            });
+    private showNextGameOrWelcome() {
+        if (this.state.gameQueue.length === 0) {
+            this.showScreen(AppScreen.Welcome);
             return;
         }
 
-        const queue = this.state.screenQueue.slice();
-        let screen: AppScreen;
+        const queue = this.state.gameQueue.slice();
+        const nextGame = queue.shift() as GameSettings;
 
-        if (queue.length === 0) {
-            screen = AppScreen.Welcome;
-        }
-        else {
-            screen = queue.shift() as AppScreen;
-        }
-
-        this.setState({
-            currentScreen: screen,
-            screenQueue: queue,
-        })
+        this.setState({ gameQueue: queue });
+        this.showGame(nextGame);
     }
 
-    private setLettersGameSettings(name: string, settings: ILettersGameSettings) {
+    private setLettersGameSettings(settings: ILettersGameSettings) {
         this.setState({
-            lettersSettings: [name, settings],
+            lettersSettings: settings,
         });
     }
 
-    private setNumbersGameSettings(name: string, settings: INumbersGameSettings) {
+    private setNumbersGameSettings(settings: INumbersGameSettings) {
         this.setState({
-            numbersSettings: [name, settings],
+            numbersSettings: settings,
         });
     }
 
-    private setConundrumSettings(name: string, settings: IConundrumSettings) {
+    private setConundrumSettings(settings: IConundrumSettings) {
         this.setState({
-            conundrumSettings: [name, settings],
+            conundrumSettings: settings,
         });
     }
 }

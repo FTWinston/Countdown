@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { defaultSettingsName } from './Constants';
-import { IConundrumSettings } from './Conundrum';
+import { IConundrumSettings } from './GameSettings';
 import './Screen.css';
 
 interface IConundrumSettingsProps {
     settingsName?: string;
     settings: IConundrumSettings;
     cancel: () => void;
-    save: (name: string) => void;
+    save: () => void;
     delete: () => void;
 }
 
@@ -162,6 +162,6 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
             settings.scrambled = undefined;
         }
         
-        this.props.save(this.state.name);
+        this.props.save();
     }
 }

@@ -3,17 +3,11 @@ import Worker from 'worker-loader!./ConundrumWorker';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
+import { IConundrumSettings } from './GameSettings';
 import { GameState } from './GameState';
 import { shuffle } from './Random';
 import './Screen.css';
 import { TileSet } from './TileSet';
-
-export interface IConundrumSettings {
-    game: 'CONUNDRUM';
-    numLetters: number;
-    word?: string;
-    scrambled?: string;
-}
 
 interface IConundrumProps {
     settings: IConundrumSettings;

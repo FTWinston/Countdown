@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { defaultSettingsName } from './Constants';
-import { IConundrumSettings } from './Conundrum';
 import { ConundrumSettings } from './ConundrumSettings';
-import { defaultConundrumSettings, defaultLettersSettings, defaultNumbersSettings, GameSettings } from './GameSettings';
-import { ILettersGameSettings } from './LettersGame';
+import { defaultConundrumSettings, defaultLettersSettings, defaultNumbersSettings } from './DefaultSettings';
+import { Game } from './Enums';
+import { GameSettings, IConundrumSettings, ILettersGameSettings, INumbersGameSettings } from './GameSettings';
 import { LettersSettings } from './LettersSettings';
-import { INumbersGameSettings } from './NumbersGame';
 import { NumbersSettings } from './NumbersSettings';
 import './Settings.css';
 
 interface ISettingsProps {
-    setLettersSettings: (name: string, settings: ILettersGameSettings) => void;
-    setNumbersSettings: (name: string, settings: INumbersGameSettings) => void;
-    setConundrumSettings: (name: string, settings: IConundrumSettings) => void;
+    setLettersSettings: (settings: ILettersGameSettings) => void;
+    setNumbersSettings: (settings: INumbersGameSettings) => void;
+    setConundrumSettings: (settings: IConundrumSettings) => void;
     goBack: () => void;
 }
 
@@ -47,25 +46,25 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
 
     public componentDidUpdate(prevProps: ISettingsProps, prevState: ISettingsState) {
         if (prevState.selectedLettersSettingName !== this.state.selectedLettersSettingName) {
-            this.props.setLettersSettings(this.state.selectedLettersSettingName, this.state.allLettersSettings[this.state.selectedLettersSettingName]);
+            this.props.setLettersSettings(this.state.allLettersSettings[this.state.selectedLettersSettingName]);
         }
         
         if (prevState.selectedNumbersSettingName !== this.state.selectedNumbersSettingName) {
-            this.props.setNumbersSettings(this.state.selectedNumbersSettingName, this.state.allNumbersSettings[this.state.selectedNumbersSettingName]);
+            this.props.setNumbersSettings(this.state.allNumbersSettings[this.state.selectedNumbersSettingName]);
         }
         
         if (prevState.selectedConundrumSettingName !== this.state.selectedConundrumSettingName) {
-            this.props.setConundrumSettings(this.state.selectedConundrumSettingName, this.state.allConundrumSettings[this.state.selectedConundrumSettingName]);
+            this.props.setConundrumSettings(this.state.allConundrumSettings[this.state.selectedConundrumSettingName]);
         }
     }
 
     public render() {
         if (this.state.editingSettings !== undefined) {
-            const saveEdit = (name: string) => this.saveEdit(name);
+            const saveEdit = () => this.saveEdit();
             const cancelEdit = () => this.cancelEdit();
             const deleteEdit = () => this.deleteEdit();
 
-            if (this.state.editingSettings.game === 'LETTERS') {
+            if (this.state.editingSettings.game === Game.Letters) {
                 return (
                     <LettersSettings
                         settings={this.state.editingSettings}
@@ -76,7 +75,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
                     />
                 );
             }
-            else if (this.state.editingSettings.game === 'NUMBERS') {
+            else if (this.state.editingSettings.game === Game.Numbers) {
                 return (
                     <NumbersSettings
                         settings={this.state.editingSettings}
@@ -87,7 +86,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
                     />
                 );
             }
-            else if (this.state.editingSettings.game === 'CONUNDRUM') {
+            else if (this.state.editingSettings.game === Game.Conundrum) {
                 return (
                     <ConundrumSettings
                         settings={this.state.editingSettings}
@@ -199,22 +198,22 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         });
     }
 
-    private saveEdit(name: string) {
+    private saveEdit() {
         if (this.state.editingSettings === undefined) {
             return;
         }
 
         switch(this.state.editingSettings.game) {
-            case 'LETTERS':
-                this.saveEditLetters(name, this.state.editingSettings);
+            case Game.Letters:
+                this.saveEditLetters(this.state.editingSettings);
                 break;
             
-            case 'NUMBERS':
-                this.saveEditNumbers(name, this.state.editingSettings);
+            case Game.Numbers:
+                this.saveEditNumbers(this.state.editingSettings);
                 break;
             
-            case 'CONUNDRUM':
-                this.saveEditConundrum(name, this.state.editingSettings);
+            case Game.Conundrum:
+                this.saveEditConundrum(this.state.editingSettings);
                 break;
         }
 
@@ -227,15 +226,15 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         }
 
         switch(this.state.editingSettings.game) {
-            case 'LETTERS':
+            case Game.Letters:
                 this.saveDeleteLetters();
                 break;
             
-            case 'NUMBERS':
+            case Game.Numbers:
                 this.saveDeleteNumbers();
                 break;
             
-            case 'CONUNDRUM':
+            case Game.Conundrum:
                 this.saveDeleteConundrum();
                 break;
         }
@@ -243,49 +242,49 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         this.cancelEdit();
     }
 
-    private saveEditLetters(name: string, settings: ILettersGameSettings) {
+    private saveEditLetters(settings: ILettersGameSettings) {
         if (this.state.editingSettingsName !== undefined) {
             delete this.state.allLettersSettings[this.state.editingSettingsName];
         }
 
-        this.state.allLettersSettings[name] = settings;
+        this.state.allLettersSettings[settings.name] = settings;
         this.setState({
             allLettersSettings: this.state.allLettersSettings,
-            selectedLettersSettingName: name,
+            selectedLettersSettingName: settings.name,
         });
 
         this.saveSettings('lettersSettings', this.state.allLettersSettings);
-        this.props.setLettersSettings(name, settings);
+        this.props.setLettersSettings(settings);
     }
 
-    private saveEditNumbers(name: string, settings: INumbersGameSettings) {
+    private saveEditNumbers(settings: INumbersGameSettings) {
         if (this.state.editingSettingsName !== undefined) {
             delete this.state.allNumbersSettings[this.state.editingSettingsName];
         }
 
-        this.state.allNumbersSettings[name] = settings;
+        this.state.allNumbersSettings[settings.name] = settings;
         this.setState({
             allNumbersSettings: this.state.allNumbersSettings,
-            selectedNumbersSettingName: name,
+            selectedNumbersSettingName: settings.name,
         });
 
         this.saveSettings('numbersSettings', this.state.allNumbersSettings);
-        this.props.setNumbersSettings(name, settings);
+        this.props.setNumbersSettings(settings);
     }
 
-    private saveEditConundrum(name: string, settings: IConundrumSettings) {
+    private saveEditConundrum(settings: IConundrumSettings) {
         if (this.state.editingSettingsName !== undefined) {
             delete this.state.allConundrumSettings[this.state.editingSettingsName];
         }
 
-        this.state.allConundrumSettings[name] = settings;
+        this.state.allConundrumSettings[settings.name] = settings;
         this.setState({
             allConundrumSettings: this.state.allConundrumSettings,
-            selectedConundrumSettingName: name,
+            selectedConundrumSettingName: settings.name,
         });
         
         this.saveSettings('conundrumSettings', this.state.allConundrumSettings);
-        this.props.setConundrumSettings(name, settings);
+        this.props.setConundrumSettings(settings);
     }
 
     private saveDeleteLetters() {
@@ -300,7 +299,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         });
         
         this.saveSettings('lettersSettings', this.state.allLettersSettings);
-        this.props.setLettersSettings(defaultSettingsName, this.state.allLettersSettings[defaultSettingsName]);
+        this.props.setLettersSettings(this.state.allLettersSettings[defaultSettingsName]);
     }
 
     private saveDeleteNumbers() {
@@ -315,7 +314,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         });
         
         this.saveSettings('numberssSettings', this.state.allNumbersSettings);
-        this.props.setNumbersSettings(defaultSettingsName, this.state.allNumbersSettings[defaultSettingsName]);
+        this.props.setNumbersSettings(this.state.allNumbersSettings[defaultSettingsName]);
     }
 
     private saveDeleteConundrum() {
@@ -330,7 +329,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         });
         
         this.saveSettings('conundrumSettings', this.state.allConundrumSettings);
-        this.props.setConundrumSettings(defaultSettingsName, this.state.allConundrumSettings[defaultSettingsName]);
+        this.props.setConundrumSettings(this.state.allConundrumSettings[defaultSettingsName]);
     }
 
     private createNewLettersSettings() {

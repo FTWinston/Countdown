@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Button } from './Button';
 import { defaultSettingsName } from './Constants';
-import { ILettersGameSettings } from './LettersGame';
+import { ILettersGameSettings } from './GameSettings';
 import './Screen.css';
 
 interface ILettersSettingsProps {
     settings: ILettersGameSettings;
     settingsName?: string;
     cancel: () => void;
-    save: (name: string) => void;
+    save: () => void;
     delete: () => void;
 }
 
@@ -162,6 +162,7 @@ export class LettersSettings extends React.PureComponent<ILettersSettingsProps, 
     private save() {
         const settings = this.props.settings;
         
+        settings.name = this.state.name;
         settings.minLetters = this.state.minLetters;
         settings.maxLetters = this.state.maxLetters;
         settings.minConsonants = this.state.minConsonants;
@@ -169,6 +170,6 @@ export class LettersSettings extends React.PureComponent<ILettersSettingsProps, 
         settings.consonants = this.state.consonants;
         settings.vowels = this.state.vowels;
         
-        this.props.save(this.state.name);
+        this.props.save();
     }
 }
