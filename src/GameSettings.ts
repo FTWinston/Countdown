@@ -1,12 +1,16 @@
-import { Game } from './Enums';
+import { Game, GameOrSequence, Sequence } from './Enums';
 
 interface ISettings {
-    game: Game;
     name: string;
+    type: GameOrSequence;
 }
 
-export interface ILettersGameSettings extends ISettings {
-    game: Game.Letters;
+interface IGameSettings extends ISettings {
+    type: Game;
+}
+
+export interface ILettersGameSettings extends IGameSettings {
+    type: Game.Letters;
     minLetters: number;
     maxLetters: number;
     minConsonants: number;
@@ -15,8 +19,8 @@ export interface ILettersGameSettings extends ISettings {
     vowels: string[];
 }
 
-export interface INumbersGameSettings extends ISettings {
-    game: Game.Numbers;
+export interface INumbersGameSettings extends IGameSettings {
+    type: Game.Numbers;
     smallNumbers: number[];
     bigNumbers: number[];
     numberCount: number;
@@ -24,11 +28,17 @@ export interface INumbersGameSettings extends ISettings {
     maxTarget: number;
 }
 
-export interface IConundrumSettings extends ISettings {
-    game: Game.Conundrum;
+export interface IConundrumSettings extends IGameSettings {
+    type: Game.Conundrum;
     numLetters: number;
     word?: string;
     scrambled?: string;
 }
 
-export type GameSettings = ILettersGameSettings | INumbersGameSettings | IConundrumSettings;
+export interface ISequenceSettings extends ISettings {
+    games: GameSettings[];
+    type: Sequence.GameSequence;
+}
+
+export type GameSettings     = ILettersGameSettings | INumbersGameSettings | IConundrumSettings;
+export type EditableSettings = ILettersGameSettings | INumbersGameSettings | IConundrumSettings | ISequenceSettings;

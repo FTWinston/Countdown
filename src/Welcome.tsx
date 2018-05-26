@@ -7,7 +7,7 @@ interface IWelcomeProps {
     selectLetters: () => void;
     selectNumbers: () => void;
     selectConundrum: () => void;
-    selectFullShow: () => void;
+    selectSequence: () => void;
     selectAbout: () => void;
     selectSettings: () => void;
 }
@@ -26,7 +26,7 @@ export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
         const selectLetters = () => this.props.selectLetters();
         const selectNumbers = () => this.props.selectNumbers();
         const selectConundrum = () => this.props.selectConundrum();
-        const selectFull = () => this.props.selectFullShow();
+        const selectSequence = () => this.props.selectSequence();
         const selectAbout = () => this.props.selectAbout();
         const selectSettings = () => this.props.selectSettings();
 
@@ -48,9 +48,9 @@ export class Welcome extends React.PureComponent<IWelcomeProps, {}> {
                     onClick={selectConundrum}
                 />
                 <Button
-                    text="Full session"
+                    text="Game sequence"
                     enabled={true}
-                    onClick={selectFull}
+                    onClick={selectSequence}
                 />
                 <Button
                     text="⛭"

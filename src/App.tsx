@@ -3,7 +3,7 @@ import { About } from './About';
 import { Conundrum } from './Conundrum';
 import { defaultConundrumSettings, defaultGameSequence, defaultLettersSettings, defaultNumbersSettings } from './DefaultSettings';
 import { AppScreen, Game } from './Enums';
-import { GameSettings, IConundrumSettings, ILettersGameSettings, INumbersGameSettings } from './GameSettings';
+import { GameSettings, IConundrumSettings, ILettersGameSettings, INumbersGameSettings, ISequenceSettings } from './GameSettings';
 import { Interlude } from './Interlude';
 import { LettersGame } from './LettersGame';
 import { NumbersGame } from './NumbersGame';
@@ -16,7 +16,7 @@ interface IAppState {
     lettersSettings: ILettersGameSettings;
     numbersSettings: INumbersGameSettings;
     conundrumSettings: IConundrumSettings;
-    sequenceSettings: GameSettings[];
+    sequenceSettings: ISequenceSettings;
     currentGame?: GameSettings;
 }
 
@@ -48,13 +48,14 @@ class App extends React.PureComponent<{}, IAppState> {
         const selectLetters = () => this.showGame(this.state.lettersSettings);
         const selectNumbers = () => this.showGame(this.state.numbersSettings);
         const selectConundrum = () => this.showGame(this.state.conundrumSettings);
-        const selectFullShow = () => this.startFullShow();
+        const selectFullShow = () => this.startSequence();
         const selectAbout = () => this.showScreen(AppScreen.About);
         const selectSettings = () => this.showScreen(AppScreen.Settings);
         const showWelcome = () => this.showScreen(AppScreen.Welcome);
         const setLetters = (settings: ILettersGameSettings) => this.setLettersGameSettings(settings);
         const setNumbers = (settings: INumbersGameSettings) => this.setNumbersGameSettings(settings);
         const setConundrum = (settings: IConundrumSettings) => this.setConundrumSettings(settings);
+        const setSequence = (settings: ISequenceSettings) => this.setSequenceSettings(settings);
 
         switch (this.state.currentScreen) {
             case AppScreen.Interlude:
@@ -66,6 +67,7 @@ class App extends React.PureComponent<{}, IAppState> {
                         setLettersSettings={setLetters}
                         setNumbersSettings={setNumbers}
                         setConundrumSettings={setConundrum}
+                        setSequenceSettings={setSequence}
                         goBack={showWelcome}
                     />
                 );
@@ -73,7 +75,7 @@ class App extends React.PureComponent<{}, IAppState> {
                 return <About key="screen" goBack={showWelcome} />;
             case AppScreen.Game:
                 if (this.state.currentGame !== undefined) {
-                    switch (this.state.currentGame.game) {            
+                    switch (this.state.currentGame.type) {            
                         case Game.Letters:
                             return (
                                 <LettersGame
@@ -110,7 +112,7 @@ class App extends React.PureComponent<{}, IAppState> {
                         selectLetters={selectLetters}
                         selectNumbers={selectNumbers}
                         selectConundrum={selectConundrum}
-                        selectFullShow={selectFullShow}
+                        selectSequence={selectFullShow}
                         selectAbout={selectAbout}
                         selectSettings={selectSettings}
                     />
@@ -144,13 +146,11 @@ class App extends React.PureComponent<{}, IAppState> {
         this.showScreen(AppScreen.Game);
     }
 
-    private startFullShow() {
-        const sequence = this.state.sequenceSettings.slice();
+    private startSequence() {
+        const sequence = this.state.sequenceSettings.games.slice();
         const firstGame = sequence.shift() as GameSettings;
 
-        this.setState({
-            gameQueue: sequence,
-        });
+        this.setState({ gameQueue: sequence });
         this.showGame(firstGame);
     }
 
@@ -182,6 +182,12 @@ class App extends React.PureComponent<{}, IAppState> {
     private setConundrumSettings(settings: IConundrumSettings) {
         this.setState({
             conundrumSettings: settings,
+        });
+    }
+
+    private setSequenceSettings(settings: ISequenceSettings) {
+        this.setState({
+            sequenceSettings: settings,
         });
     }
 }

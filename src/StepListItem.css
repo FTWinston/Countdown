@@ -1,0 +1,40 @@
+.stepListItem {
+    display: flex;
+    justify-content: stretch;
+    align-items: center;
+    margin: 0.5em;
+}
+
+.stepListItem__name {
+    flex-grow: 1;
+}
+
+.stepListItem__moveUp, .stepListItem__moveDown, .stepListItem__delete {
+    flex-shrink: 0;
+    width: 2em;
+    height: 1em;
+    margin-left: 0.5em;
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.25s;
+}
+
+.stepListItem__delete {
+    color: darkred;
+}
+
+.stepListItem__moveUp:hover, .stepListItem__moveDown:hover, .stepListItem__delete:hover {
+    color: white;
+}
+
+.stepListItem__moveUp::before {
+    content: '↑';
+}
+
+.stepListItem__moveDown::before {
+    content: '↓';
+}
+
+.stepListItem__delete::before {
+    content: 'x';
+}

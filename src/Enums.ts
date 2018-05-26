@@ -7,7 +7,13 @@ export const enum AppScreen {
 }
 
 export const enum Game {
-    Letters,
-    Numbers,
-    Conundrum,
+    Letters = 0,
+    Numbers = 1,
+    Conundrum = 2,
 }
+
+export const enum Sequence {
+    GameSequence = 3,
+}
+
+export type GameOrSequence = Game | Sequence;

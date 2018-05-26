@@ -2,17 +2,19 @@ import * as React from 'react';
 import { Button } from './Button';
 import { defaultSettingsName } from './Constants';
 import { ConundrumSettings } from './ConundrumSettings';
-import { defaultConundrumSettings, defaultLettersSettings, defaultNumbersSettings } from './DefaultSettings';
-import { Game } from './Enums';
-import { GameSettings, IConundrumSettings, ILettersGameSettings, INumbersGameSettings } from './GameSettings';
+import { defaultConundrumSettings, defaultGameSequence, defaultLettersSettings, defaultNumbersSettings } from './DefaultSettings';
+import { Game, Sequence } from './Enums';
+import { EditableSettings, IConundrumSettings, ILettersGameSettings, INumbersGameSettings, ISequenceSettings } from './GameSettings';
 import { LettersSettings } from './LettersSettings';
 import { NumbersSettings } from './NumbersSettings';
+import { SequenceSettings } from './SequenceSettings';
 import './Settings.css';
 
 interface ISettingsProps {
     setLettersSettings: (settings: ILettersGameSettings) => void;
     setNumbersSettings: (settings: INumbersGameSettings) => void;
     setConundrumSettings: (settings: IConundrumSettings) => void;
+    setSequenceSettings: (settings: ISequenceSettings) => void;
     goBack: () => void;
 }
 
@@ -20,27 +22,41 @@ interface ISettingsState {
     allLettersSettings: { [key:string]: ILettersGameSettings };
     allNumbersSettings: { [key:string]: INumbersGameSettings };
     allConundrumSettings: { [key:string]: IConundrumSettings };
+    allSequenceSettings: { [key:string]: ISequenceSettings };
 
     selectedLettersSettingName: string;
     selectedNumbersSettingName: string;
     selectedConundrumSettingName: string;
+    selectedSequenceSettingName: string;
 
-    editingSettings?: GameSettings;
+    editingSettings?: EditableSettings;
     editingSettingsName?: string;
+}
+
+interface IFlattenedSequenceSettings {
+    name: string;
+    games: Array<[Game, string]>;
 }
 
 export class Settings extends React.PureComponent<ISettingsProps, ISettingsState> {
     constructor(props: ISettingsProps) {
         super(props);
 
+        const letters = this.loadLettersSettings();
+        const numbers = this.loadNumbersSettings();
+        const conundrums = this.loadConundrumSettings();
+        const sequences = this.loadSequenceSettings(letters, numbers, conundrums);
+
         this.state = {
-            allConundrumSettings: this.loadConundrumSettings(),
-            allLettersSettings: this.loadLettersSettings(),
-            allNumbersSettings: this.loadNumbersSettings(),
+            allConundrumSettings: conundrums,
+            allLettersSettings: letters,
+            allNumbersSettings: numbers,
+            allSequenceSettings: sequences,
 
             selectedConundrumSettingName: defaultSettingsName,
             selectedLettersSettingName: defaultSettingsName,
             selectedNumbersSettingName: defaultSettingsName,
+            selectedSequenceSettingName: defaultSettingsName,
         }
     }
 
@@ -64,7 +80,19 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
             const cancelEdit = () => this.cancelEdit();
             const deleteEdit = () => this.deleteEdit();
 
-            if (this.state.editingSettings.game === Game.Letters) {
+            if (this.state.editingSettings.type === Sequence.GameSequence) {
+                return (
+                    <SequenceSettings
+                        settings={this.state.editingSettings}
+                        settingsName={this.state.editingSettingsName}
+                        allSettings={this.joinAllSettings()}
+                        save={saveEdit}
+                        cancel={cancelEdit}
+                        delete={deleteEdit}
+                    />
+                );
+            }
+            else if (this.state.editingSettings.type === Game.Letters) {
                 return (
                     <LettersSettings
                         settings={this.state.editingSettings}
@@ -75,7 +103,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
                     />
                 );
             }
-            else if (this.state.editingSettings.game === Game.Numbers) {
+            else if (this.state.editingSettings.type === Game.Numbers) {
                 return (
                     <NumbersSettings
                         settings={this.state.editingSettings}
@@ -86,7 +114,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
                     />
                 );
             }
-            else if (this.state.editingSettings.game === Game.Conundrum) {
+            else if (this.state.editingSettings.type === Game.Conundrum) {
                 return (
                     <ConundrumSettings
                         settings={this.state.editingSettings}
@@ -105,6 +133,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
                 {this.renderLettersSection()}
                 {this.renderNumbersSection()}
                 {this.renderConundrumSection()}
+                {this.renderSequenceSection()}
                 <div className="screen__section">
                     <Button enabled={true} text="Go back" onClick={goBack} />
                 </div>
@@ -112,7 +141,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         );
     }
 
-    private renderSection<TSetting extends GameSettings>(
+    private renderSection<TSetting extends EditableSettings>(
         sectionName: string,
         settings: { [key:string]: TSetting },
         selectedSettingsName: string,
@@ -191,6 +220,49 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         );
     }
 
+    private renderSequenceSection() {
+        return this.renderSection(
+            'Game sequence',
+            this.state.allSequenceSettings,
+            this.state.selectedSequenceSettingName,
+            val => this.setState({ selectedSequenceSettingName: val }),
+            () => this.createNewSequenceSettings(),
+        );
+    }
+
+    private joinAllSettings() {
+        const allSettings = [];
+
+        for (const key in this.state.allLettersSettings) {
+            if (!this.state.allLettersSettings.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const item = this.state.allLettersSettings[key];
+            allSettings.push(item);
+        }
+        
+        for (const key in this.state.allNumbersSettings) {
+            if (!this.state.allNumbersSettings.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const item = this.state.allNumbersSettings[key];
+            allSettings.push(item);
+        }
+
+        for (const key in this.state.allConundrumSettings) {
+            if (!this.state.allConundrumSettings.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const item = this.state.allConundrumSettings[key];
+            allSettings.push(item);
+        }
+
+        return allSettings;
+    }
+
     private cancelEdit() {
         this.setState({
             editingSettings: undefined,
@@ -203,7 +275,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
             return;
         }
 
-        switch(this.state.editingSettings.game) {
+        switch(this.state.editingSettings.type) {
             case Game.Letters:
                 this.saveEditLetters(this.state.editingSettings);
                 break;
@@ -215,6 +287,10 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
             case Game.Conundrum:
                 this.saveEditConundrum(this.state.editingSettings);
                 break;
+
+            case Sequence.GameSequence:
+                this.saveEditSequence(this.state.editingSettings);
+                break;
         }
 
         this.cancelEdit();
@@ -225,7 +301,31 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
             return;
         }
 
-        switch(this.state.editingSettings.game) {
+        if (this.state.editingSettings.type !== Sequence.GameSequence) {
+            // if we delete something, remove it from every sequence its in
+            let wasInSequence = false;
+            for (const key in this.state.allSequenceSettings) {
+                if (!this.state.allSequenceSettings.hasOwnProperty(key)) {
+                    const sequence = this.state.allSequenceSettings[key];
+
+                    while (true) {
+                        const index = sequence.games.indexOf(this.state.editingSettings);
+                        if (index === -1) {
+                            break;
+                        }
+
+                        sequence.games.splice(index, 1);
+                        wasInSequence = true;
+                    }
+                }
+            }
+
+            if (wasInSequence) {
+                this.saveSequenceSettings();
+            }
+        }
+
+        switch(this.state.editingSettings.type) {
             case Game.Letters:
                 this.saveDeleteLetters();
                 break;
@@ -236,6 +336,10 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
             
             case Game.Conundrum:
                 this.saveDeleteConundrum();
+                break;
+
+            case Sequence.GameSequence:
+                this.saveDeleteSequence();
                 break;
         }
 
@@ -287,6 +391,21 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         this.props.setConundrumSettings(settings);
     }
 
+    private saveEditSequence(settings: ISequenceSettings) {
+        if (this.state.editingSettingsName !== undefined) {
+            delete this.state.allSequenceSettings[this.state.editingSettingsName];
+        }
+
+        this.state.allSequenceSettings[settings.name] = settings;
+        this.setState({
+            allSequenceSettings: this.state.allSequenceSettings,
+            selectedSequenceSettingName: settings.name,
+        });
+        
+        this.saveSequenceSettings();
+        this.props.setSequenceSettings(settings);
+    }
+
     private saveDeleteLetters() {
         if (this.state.editingSettingsName === undefined) {
             return;
@@ -313,7 +432,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
             selectedNumbersSettingName: defaultSettingsName,
         });
         
-        this.saveSettings('numberssSettings', this.state.allNumbersSettings);
+        this.saveSettings('numbersSettings', this.state.allNumbersSettings);
         this.props.setNumbersSettings(this.state.allNumbersSettings[defaultSettingsName]);
     }
 
@@ -330,6 +449,21 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         
         this.saveSettings('conundrumSettings', this.state.allConundrumSettings);
         this.props.setConundrumSettings(this.state.allConundrumSettings[defaultSettingsName]);
+    }
+
+    private saveDeleteSequence() {
+        if (this.state.editingSettingsName === undefined) {
+            return;
+        }
+
+        delete this.state.allSequenceSettings[this.state.editingSettingsName];
+        this.setState({
+            allSequenceSettings: this.state.allSequenceSettings,
+            selectedSequenceSettingName: defaultSettingsName,
+        });
+        
+        this.saveSequenceSettings();
+        this.props.setSequenceSettings(this.state.allSequenceSettings[defaultSettingsName]);
     }
 
     private createNewLettersSettings() {
@@ -350,6 +484,12 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
         return Object.assign({}, defaultConundrumSettings);
     }
 
+    private createNewSequenceSettings() {
+        const settings = Object.assign({}, defaultGameSequence);
+        settings.games = defaultGameSequence.games.slice();
+        return settings;
+    }
+
     private loadSettings<TSetting>(keyName: string, defaultSettings: TSetting) {
         const strSettings = localStorage.getItem(keyName);
         const all: { [key:string]: TSetting } = strSettings === null ? {} : JSON.parse(strSettings);
@@ -368,13 +508,74 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
     private loadConundrumSettings() {
         return this.loadSettings('conundrumSettings', defaultConundrumSettings);
     }
+
+    private loadSequenceSettings(
+        letters: { [key:string]: ILettersGameSettings },
+        numbers: { [key:string]: INumbersGameSettings },
+        conundrums: { [key:string]: IConundrumSettings },
+    ) {
+        // replace each [type, name] with actual GameSettings
+        const strSettings = localStorage.getItem('sequenceSettings');
+        const allFlattenedSettings: { [key:string]: IFlattenedSequenceSettings } = strSettings === null ? {} : JSON.parse(strSettings);
+        const allFullSettings = {};
+        
+        for (const key in allFlattenedSettings) {
+            if (!allFlattenedSettings.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const flattenedSettings = allFlattenedSettings[key];
+            const fullSettings: ISequenceSettings = {
+                games: flattenedSettings.games.map(game => {
+                    switch (game[0]) {
+                        case Game.Letters:
+                            return letters[game[1]];
+                        case Game.Numbers:
+                            return numbers[game[1]];
+                        case Game.Conundrum:
+                            return conundrums[game[1]];
+                    }
+                }),
+                name: flattenedSettings.name,
+                type: Sequence.GameSequence,
+            };
+
+            allFullSettings[key] = fullSettings;
+        }
+        
+        allFullSettings[defaultSettingsName] = defaultGameSequence;
+
+        return allFullSettings;
+    }
     
-    private saveSettings<TSetting>(keyName: string, settings: { [key:string]: TSetting }) {
+    private saveSettings<TSetting>(keyName: string, settings: { [key: string]: TSetting }) {
         const defaultSettings = settings[defaultSettingsName];
         delete settings[defaultSettingsName];
 
         localStorage.setItem(keyName, JSON.stringify(settings));
 
         settings[defaultSettingsName] = defaultSettings;
+    }
+
+    private saveSequenceSettings() {
+        // replace each GameSettings with [type, name]
+        const allFlattenedSettings: { [key: string]: IFlattenedSequenceSettings } = {};
+        const allFullSettings = this.state.allSequenceSettings;
+
+        for (const key in allFullSettings) {
+            if (!allFullSettings.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const fullSettings = allFullSettings[key];
+            const flattenedSettings: IFlattenedSequenceSettings = {
+                games: fullSettings.games.map(game => [game.type, game.name] as [Game, string]),
+                name: fullSettings.name,
+            };
+
+            allFlattenedSettings[key] = flattenedSettings;
+        }
+
+        this.saveSettings('sequenceSettings', allFlattenedSettings);
     }
 }

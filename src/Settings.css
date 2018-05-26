@@ -97,3 +97,7 @@ textarea.settingsSection__input--letters {
 * + .settings__option {
     margin-left: 2em;
 }
+
+.settingsSection--stepList {
+    align-items: stretch;
+}
