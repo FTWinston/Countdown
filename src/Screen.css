@@ -36,7 +36,7 @@
     margin: 0 2em;
     overflow-y: auto;
     
-    background-color: #9bf;
+    background-color: #ccc;
     padding: 1em;
     border-radius: 1em;
     font-size: 1.25em;
@@ -45,6 +45,10 @@
 .screen--about {
     display: flex;
     flex-direction: column;
+}
+
+.screen--about .screen__text {
+    margin-top: 0.5em;
 }
 
 .screen--welcome {
