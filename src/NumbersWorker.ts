@@ -126,7 +126,6 @@ function forEachPermutation<T>(items: T[], permutation: T[], size: number, forEa
     for (const item of items) {
         permutation.push(item);
 
-
         items.splice(items.indexOf(item), 1);
 
         forEachPermutation(items, permutation, size, forEach);
@@ -135,54 +134,69 @@ function forEachPermutation<T>(items: T[], permutation: T[], size: number, forEa
     }
 }
 
-// this fixed list only works for 6-number games, of course. D'oh! Can we calculate a reliable list quickly,
-// or do we just try all that aren't "obviously" wrong and abort if they are?
-const operatorPositionPermutations = [
-    [6, 7, 8, 9, 10],
-    [5, 7, 8, 9, 10],
-    [5, 6, 8, 9, 10],
-    [5, 6, 7, 9, 10],
-    [5, 6, 7, 8, 10],
-    [4, 7, 8, 9, 10],
-    [4, 6, 8, 9, 10],
-    [4, 6, 7, 9, 10],
-    [4, 6, 7, 8, 10],
-    [4, 5, 8, 9, 10],
-    [4, 5, 7, 9, 10],
-    [4, 5, 7, 8, 10],
-    [4, 5, 6, 9, 10],
-    [4, 5, 6, 8, 10],
-    [3, 7, 8, 9, 10],
-    [3, 6, 8, 9, 10],
-    [3, 6, 7, 9, 10],
-    [3, 6, 7, 8, 10],
-    [3, 5, 8, 9, 10],
-    [3, 5, 7, 9, 10],
-    [3, 5, 7, 8, 10],
-    [3, 5, 6, 9, 10],
-    [3, 5, 6, 8, 10],
-    [3, 4, 8, 9, 10],
-    [3, 4, 7, 9, 10],
-    [3, 4, 7, 8, 10],
-    [3, 4, 6, 9, 10],
-    [3, 4, 6, 8, 10],
-    [2, 7, 8, 9, 10],
-    [2, 6, 8, 9, 10],
-    [2, 6, 7, 9, 10],
-    [2, 6, 7, 8, 10],
-    [2, 5, 8, 9, 10],
-    [2, 5, 7, 9, 10],
-    [2, 5, 7, 8, 10],
-    [2, 5, 6, 9, 10],
-    [2, 5, 6, 8, 10],
-    [2, 4, 8, 9, 10],
-    [2, 4, 7, 9, 10],
-    [2, 4, 7, 8, 10],
-    [2, 4, 6, 9, 10],
-    [2, 4, 6, 8, 10],
-];
+export function isOperatorPositionPermutationValid(numElements: number, positions: number[]) {
+    let stackSize = 0;
+    let evalPos = 0;
+
+    for (const nextOperatorPos of positions) {
+
+        stackSize += nextOperatorPos - evalPos;
+        evalPos = nextOperatorPos;
+        
+        if (stackSize < 2) {
+            return false;
+        }
+
+        stackSize -= 2;
+    }
+
+    return stackSize === 0;
+}
+
+export function getValidOperatorPositionPermutations(numNumbers: number) {
+    const numOperators = numNumbers - 1;
+    const numElements = numNumbers + numOperators;
+
+    const firstAddIndex = 2;
+    const lastAddIndex = numElements - 2; // we will always add an operator at the end
+
+    const validPositions: number[][] = [];
+
+    const gotPermuation = (positions: number[]) => {
+        positions = positions.slice();
+        positions.push(numElements - 1); // we always add an operator at the end
+        if (isOperatorPositionPermutationValid(numElements, positions)) {
+            validPositions.push(positions);
+        }
+    }
+
+    const data: number[] = [];
+    getNumberPermutations(data, firstAddIndex, lastAddIndex, 0, numOperators - 1, gotPermuation);
+    return validPositions;
+}
+
+function getNumberPermutations(
+    data: number[],
+    startIndex: number,
+    endIndex: number,
+    currentIndex: number,
+    combinationSize: number,
+    gotPermuation: (permutation: number[]) => void
+) {
+    if (currentIndex === combinationSize) {
+        gotPermuation(data);
+        return;
+    }
+
+    for (let i = startIndex; i <= endIndex && endIndex - i + 1 >= combinationSize - currentIndex; i++) {
+        data[currentIndex] = i;
+        getNumberPermutations(data, i + 1, endIndex, currentIndex + 1, combinationSize, gotPermuation);
+    }
+}
 
 function applyOperatorPositionPermutations(values: number[]) {
+    const operatorPositionPermutations = getValidOperatorPositionPermutations(values.length);
+
     for (const operatorIndices of operatorPositionPermutations) {
         const expression = values.slice();
 
