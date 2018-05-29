@@ -347,47 +347,53 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
     }
 
     private saveEditLetters(settings: ILettersGameSettings) {
+        const updatedSettings = Object.assign({}, this.state.allLettersSettings);
+
         if (this.state.editingSettingsName !== undefined) {
-            delete this.state.allLettersSettings[this.state.editingSettingsName];
+            delete updatedSettings[this.state.editingSettingsName];
         }
 
-        this.state.allLettersSettings[settings.name] = settings;
+        updatedSettings[settings.name] = settings;
         this.setState({
-            allLettersSettings: this.state.allLettersSettings,
+            allLettersSettings: updatedSettings,
             selectedLettersSettingName: settings.name,
         });
 
-        this.saveSettings('lettersSettings', this.state.allLettersSettings);
+        this.saveSettings('lettersSettings', updatedSettings);
         this.props.setLettersSettings(settings);
     }
 
     private saveEditNumbers(settings: INumbersGameSettings) {
+        const updatedSettings = Object.assign({}, this.state.allNumbersSettings);
+
         if (this.state.editingSettingsName !== undefined) {
-            delete this.state.allNumbersSettings[this.state.editingSettingsName];
+            delete updatedSettings[this.state.editingSettingsName];
         }
 
-        this.state.allNumbersSettings[settings.name] = settings;
+        updatedSettings[settings.name] = settings;
         this.setState({
-            allNumbersSettings: this.state.allNumbersSettings,
+            allNumbersSettings: updatedSettings,
             selectedNumbersSettingName: settings.name,
         });
 
-        this.saveSettings('numbersSettings', this.state.allNumbersSettings);
+        this.saveSettings('numbersSettings', updatedSettings);
         this.props.setNumbersSettings(settings);
     }
 
     private saveEditConundrum(settings: IConundrumSettings) {
+        const updatedSettings = Object.assign({}, this.state.allConundrumSettings);
+
         if (this.state.editingSettingsName !== undefined) {
-            delete this.state.allConundrumSettings[this.state.editingSettingsName];
+            delete updatedSettings[this.state.editingSettingsName];
         }
 
-        this.state.allConundrumSettings[settings.name] = settings;
+        updatedSettings[settings.name] = settings;
         this.setState({
-            allConundrumSettings: this.state.allConundrumSettings,
+            allConundrumSettings: updatedSettings,
             selectedConundrumSettingName: settings.name,
         });
         
-        this.saveSettings('conundrumSettings', this.state.allConundrumSettings);
+        this.saveSettings('conundrumSettings', updatedSettings);
         this.props.setConundrumSettings(settings);
     }
 
