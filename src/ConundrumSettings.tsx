@@ -148,6 +148,8 @@ export class ConundrumSettings extends React.PureComponent<IConundrumSettingsPro
 
     private save() {
         const settings = this.props.settings;
+        settings.name = this.state.name;
+        
         if (this.state.useGivenWord) {
             const word = this.state.word.trim();
             const scrambled = this.state.scrambled.trim();
