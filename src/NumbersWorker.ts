@@ -272,6 +272,7 @@ class InfixOperation {
 export function writeExpression(postfix: Expression) {
     const stack: InfixOperation[] = [];
     const multiplication = operators[2];
+    const subtraction = operators[1];
     let firstUsedElement = postfix.length;
 
     for (const element of postfix) {
@@ -289,9 +290,9 @@ export function writeExpression(postfix: Expression) {
             firstUsedElement = firstOperandIndex;
         }
         
-        let text = bracketNeeded(operand1, operator) ?  `(${operand1.text})` : operand1.text;
+        let text = bracketNeeded(operand1, operator, false) ?  `(${operand1.text})` : operand1.text;
         text += ` ${operator.text} `;
-        text += bracketNeeded(operand2, operator) ?  `(${operand2.text})` : operand2.text;
+        text += bracketNeeded(operand2, operator, true) ?  `(${operand2.text})` : operand2.text;
 
         const operation = new InfixOperation(text, operator);
         stack.push(operation);
@@ -303,13 +304,17 @@ export function writeExpression(postfix: Expression) {
 
     return stack.join(' ');
 
-    function bracketNeeded(operand: InfixOperation, operator: Operator) {
+    function bracketNeeded(operand: InfixOperation, operator: Operator, isSecondOperand: boolean) {
         if (operand.operator === null) {
             return false;
         }
 
         if ((!operator.displayLinear || !operand.operator.displayLinear)
             && (operator !== multiplication || operand.operator !== multiplication)) {
+            return true;
+        }
+
+        if (isSecondOperand && operator === subtraction && operand.operator === subtraction) {
             return true;
         }
 

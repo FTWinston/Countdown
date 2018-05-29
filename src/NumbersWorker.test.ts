@@ -14,6 +14,12 @@ test('get the right solution', () => {
     expect(results[0]).toBe(757);
 });
 
+test('don\'t remove subtractive brackets', () => {
+    const solution = solve(919, [79, 13, 10, 3, 2]);
+    expect(solution[1]).not.toBe('((79 + 13) x 10) - 3 - 2');
+    console.log(solution[1]);
+});
+
 test('remove multiplicative brackets', () => {
     const results = solve(304, [2, 4, 1, 4, 3, 9]);
     expect(results[1]).toBe('((9 x 2) + 1) x 4 x 4');
