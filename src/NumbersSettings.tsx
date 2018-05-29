@@ -15,7 +15,9 @@ interface INumbersSettingsProps {
 interface INumbersSettingsState {
     name: string;
     smallNumbers: number[];
+    smallTrailingSpace: boolean;
     bigNumbers: number[];
+    bigTrailingSpace: boolean;
     numberCount: number;
     minTarget: number;
     maxTarget: number;
@@ -27,11 +29,13 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
 
         this.state = {
             bigNumbers: props.settings.bigNumbers.slice(),
+            bigTrailingSpace: false,
             maxTarget: props.settings.maxTarget,
             minTarget: props.settings.minTarget,
             name: props.settingsName === undefined ? '' : props.settingsName,
             numberCount: props.settings.numberCount,
             smallNumbers: props.settings.smallNumbers.slice(),
+            smallTrailingSpace: false,
         };
     }
     
@@ -52,12 +56,16 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
             maxTarget: e.target.value === '' ? 0 : parseInt(e.target.value, 10),
         });
 
+        const bigNumberText = this.state.bigNumbers.join(' ') + (this.state.bigTrailingSpace ? ' ' : '');
         const setBigNumbers = (e: React.ChangeEvent<HTMLTextAreaElement>) => this.setState({
             bigNumbers: e.target.value === '' ? [] : e.target.value.split(' ').map(v => parseInt(v, 10)).filter(v => !isNaN(v)),
+            bigTrailingSpace: e.target.value.endsWith(' '),
         });
 
+        const smallNumberText = this.state.smallNumbers.join(' ') + (this.state.smallTrailingSpace ? ' ' : '');
         const setSmallNumbers = (e: React.ChangeEvent<HTMLTextAreaElement>) => this.setState({
             smallNumbers: e.target.value === '' ? [] : e.target.value.split(' ').map(v => parseInt(v, 10)).filter(v => !isNaN(v)),
+            smallTrailingSpace: e.target.value.endsWith(' '),
         });
         
         const cancel = () => this.props.cancel();
@@ -102,7 +110,7 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
                     <textarea
                         className="settingsSection__input"
                         placeholder="(enter value)"
-                        value={this.state.bigNumbers.join(' ') + ' '}
+                        value={bigNumberText}
                         onChange={setBigNumbers}
                     />
                 </div>
@@ -112,7 +120,7 @@ export class NumbersSettings extends React.PureComponent<INumbersSettingsProps, 
                     <textarea
                         className="settingsSection__input"
                         placeholder="(enter value)"
-                        value={this.state.smallNumbers.join(' ') + ' '}
+                        value={smallNumberText}
                         onChange={setSmallNumbers}
                     />
                 </div>
