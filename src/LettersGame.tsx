@@ -6,7 +6,7 @@ import { musicStartPosition } from './Constants';
 import { delay } from './Delay';
 import { ILettersGameSettings } from './GameSettings';
 import { GameState } from './GameState';
-import { shuffle } from './Random';
+import { preventRepeats, shuffle } from './Random';
 import './Screen.css';
 import './Solution.css';
 import { speak } from './Speech';
@@ -37,14 +37,14 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         super(props);
 
         this.state = {
-            consonantsAvailable: shuffle(this.props.settings.consonants.slice()),
+            consonantsAvailable: preventRepeats(shuffle(this.props.settings.consonants.slice()), 0.5),
             letters: [],
             numConsonants: 0,
             numVowels: 0,
             solutions: [],
             state: GameState.Setup,
             timeLeft: 30,
-            vowelsAvailable: shuffle(this.props.settings.vowels.slice()),
+            vowelsAvailable: preventRepeats(shuffle(this.props.settings.vowels.slice()), 0.5),
         };
     }
     
