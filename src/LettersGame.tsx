@@ -48,6 +48,12 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         };
     }
     
+    public componentDidUpdate(prevProps: ILettersGameProps, prevState: ILettersGameState) {
+        if (this.state.state === GameState.Active && prevState.state !== GameState.Active) {
+            this.startGame(); // had to wait til all the letters are in the state, or it calculated without the last one
+        }
+    }
+
     public render() {
         const clock = this.state.state === GameState.Active ? <Clock time={this.state.timeLeft} /> : undefined;
 
@@ -87,9 +93,8 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         const addVowel = () => this.addLetter(false);
         const startGame = () => {
             this.setState({
-                state: GameState.Paused,
+                state: GameState.Active,
             });
-            this.startGame();
         };
 
         const lettersRemaining = this.props.settings.minLetters - this.state.letters.length;
@@ -201,11 +206,9 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
             allLetters.push(letter);
 
             if (allLetters.length >= this.props.settings.maxLetters) {
-                this.startGame();
-
                 return {
                     letters: allLetters,
-                    state: GameState.Paused,
+                    state: GameState.Active,
                 };
             }
 
@@ -233,7 +236,6 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
         this.props.audio.currentTime = musicStartPosition;
         this.props.audio.play();
         
-        this.setState({ state: GameState.Active });
         this.timerID = window.setInterval(() => this.tick(), 1000);
     }
 
