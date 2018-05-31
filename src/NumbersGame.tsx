@@ -147,14 +147,16 @@ export class NumbersGame extends React.PureComponent<INumbersGameProps, INumbers
         const small = shuffle(this.props.settings.smallNumbers.slice());
 
         let numAdded = 0;
-        for (numAdded=0; numAdded<numBig; numAdded++) {
+        const numSmall = this.props.settings.numberCount - numBig;
+        
+        for (numAdded=0; numAdded<numSmall; numAdded++) {
             await delay(1250);
-            this.addNumber(big.shift() as number);
+            this.addNumber(small.shift() as number);
         }
 
         for (numAdded; numAdded<this.props.settings.numberCount; numAdded++) {
             await delay(1250);
-            this.addNumber(small.shift() as number);
+            this.addNumber(big.shift() as number);
         }
 
         const targetValue = randomInt(this.props.settings.minTarget, this.props.settings.maxTarget + 1);
