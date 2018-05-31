@@ -4,8 +4,8 @@ export async function findWords(letters: string, maxResults: number) {
     const response = await fetch(`https://cors-proxy.htmldriven.com/?url=http://www.anagramica.com/all/${letters.toLowerCase()}.`);
     const data = await response.json();
     
-    let allWords = JSON.parse(data.body).all as string[];
-    allWords = allWords.map(w => w.toUpperCase());
+    const allWords = JSON.parse(data.body).all as string[];
+    const useWords = allWords.length < maxResults ? allWords : allWords.slice(0, maxResults);
 
-    return allWords.length < maxResults ? allWords : allWords.slice(0, maxResults);
+    return useWords.map(w => w.toUpperCase());
 }
