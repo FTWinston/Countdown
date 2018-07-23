@@ -123,14 +123,15 @@ function forEachPermutation<T>(items: T[], permutation: T[], size: number, forEa
         forEach(permutation);
     }
 
-    for (const item of items) {
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
         permutation.push(item);
-
-        items.splice(items.indexOf(item), 1);
+        items.splice(i, 1);
 
         forEachPermutation(items, permutation, size, forEach);
 
-        items.push(permutation.pop() as T);
+        items.splice(i, 0, item);
+        permutation.pop();
     }
 }
 
