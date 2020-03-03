@@ -8,12 +8,10 @@ interface IButtonProps {
     className?: string;
 }
 
-export class Button extends React.PureComponent<IButtonProps, {}> {
-    public render() {
-        return (
-            <button disabled={!this.props.enabled} onClick={this.props.onClick} className={this.props.className}>
-                {this.props.text}
-            </button>
-        );
-    }
+export const Button: React.FC<IButtonProps> = props => {
+    return (
+        <button disabled={!props.enabled} onClick={props.onClick} className={props.className}>
+            {props.text}
+        </button>
+    );
 }

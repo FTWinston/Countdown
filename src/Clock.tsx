@@ -1,150 +1,133 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './Clock.css';
 
 interface IClockProps {
     time: number;
 }
 
-interface IClockState {
-    width: number;
-    height: number;
+export const Clock: React.FC<IClockProps> = props => {
+    const root = useRef<HTMLDivElement>(null);
+    const canvas = useRef<HTMLCanvasElement>(null);
+
+    const [[width, height], setSize] = useState([0, 0]);
+
+    // private resizeListener?: () => void;
+
+    useEffect(
+        () => {
+            const resizeListener = () => setSize([root.current!.offsetWidth, root.current!.offsetHeight]);
+            window.addEventListener('resize', resizeListener);
+            resizeListener();
+            return () => window.removeEventListener('resize', resizeListener);
+        },
+        [root]
+    );
+
+    useEffect(
+        () => {
+            if (canvas.current) {
+                drawClock(canvas.current.getContext('2d')!, props.time, width, height);
+            }
+        },
+        [props.time, width, height, canvas]
+    );
+
+    return (
+        <div
+            className="clock"
+            ref={root}
+        >
+            <canvas
+                className="clock__canvas"
+                ref={canvas}
+                width={width}
+                height={height}
+            />
+        </div>
+    );
 }
 
-export class Clock extends React.PureComponent<IClockProps, IClockState> {
-    private root: HTMLElement;
-    private ctx: CanvasRenderingContext2D;
-    private resizeListener?: () => void;
+function drawClock(ctx: CanvasRenderingContext2D, time: number, width: number, height: number) {
+    ctx.clearRect(0, 0, width, height);
 
-    constructor(props: IClockProps) {
-        super(props);
+    const cx = width / 2;
+    const cy = height / 2;
 
-        this.state = {
-            height: 0,
-            width: 0,
-        };
-    }
+    ctx.save();
+    ctx.translate(cx, cy);
 
-    public render() {
-        return (
-            <div
-                className="clock"
-                ref={r => { if (r !== null) { this.root = r; }}}
-            >
-                <canvas
-                    className="clock__canvas"
-                    ref={c => {if (c !== null) { const ctx = c.getContext('2d'); if (ctx !== null) { this.ctx = ctx; }}}}
-                    width={this.state.width}
-                    height={this.state.height}
-                />
-            </div>
-        );
-    }
+    const r =  Math.min(width, height) * 0.45;
 
-    public componentDidMount() {
-        this.resizeListener = () => this.updateSize();
-        window.addEventListener('resize', this.resizeListener);
-        this.updateSize();
-    }
-
-    public componentDidUpdate() {
-        this.draw();
-    }
-
-    public componentWillUnmount() {
-        if (this.resizeListener !== undefined) {
-            window.removeEventListener('resize', this.resizeListener);
-        }
-    }
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#dbccbd';
+    ctx.strokeStyle = '#0e1b2c';
+    ctx.lineWidth = r * 0.075;
     
-    private updateSize() {
-        this.setState({
-            height: this.root.offsetHeight,
-            width: this.root.offsetWidth,
-        });
-    }
+    ctx.fill();
+    ctx.stroke();
 
-    private draw() {
-        const ctx = this.ctx;
-        ctx.clearRect(0, 0, this.state.width, this.state.height);
+    const handAngle = Math.PI / 2 - Math.PI * time / 30;
 
-        const cx = this.state.width / 2;
-        const cy = this.state.height / 2;
+    ctx.fillStyle = '#fffee6';
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.35, -Math.PI / 2, handAngle, false);
+    ctx.arc(0, 0, r * 0.9625, handAngle, -Math.PI / 2, true);
+    ctx.fill();
 
-        ctx.save();
-        ctx.translate(cx, cy);
+    ctx.rotate(handAngle);
+    ctx.fillStyle = '#0e1b2c';
 
-        const r =  Math.min(this.state.width, this.state.height) * 0.45;
+    ctx.beginPath();
+    ctx.moveTo(0, r * 0.05);
+    ctx.lineTo(r, r * 0.005);
+    ctx.lineTo(r, -r * 0.005);
+    ctx.lineTo(0, -r * 0.05);
+    ctx.arc(0, 0, r * 0.05, Math.PI / 2, 3 * Math.PI / 2);
+    ctx.fill();
 
-        ctx.beginPath();
-        ctx.arc(0, 0, r, 0, Math.PI * 2);
-        ctx.fillStyle = '#dbccbd';
-        ctx.strokeStyle = '#0e1b2c';
-        ctx.lineWidth = r * 0.075;
-        
-        ctx.fill();
-        ctx.stroke();
+    ctx.rotate(-handAngle);
 
-        const handAngle = Math.PI / 2 - Math.PI * this.props.time / 30;
+    ctx.lineWidth = r * 0.015;
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.lineTo(0, r);
+    ctx.moveTo(-r, 0);
+    ctx.lineTo(r, 0);
+    ctx.stroke();
 
-        ctx.fillStyle = '#fffee6';
-        ctx.beginPath();
-        ctx.arc(0, 0, r * 0.35, -Math.PI / 2, handAngle, false);
-        ctx.arc(0, 0, r * 0.9625, handAngle, -Math.PI / 2, true);
-        ctx.fill();
+    ctx.rotate(Math.PI / 6);
+    ctx.beginPath();
+    ctx.moveTo(0, -r * 0.9);
+    ctx.lineTo(0, -r * 0.6);
+    ctx.moveTo(0, r * 0.9);
+    ctx.lineTo(0, r * 0.6);
+    ctx.stroke();
 
-        ctx.rotate(handAngle);
-        ctx.fillStyle = '#0e1b2c';
+    ctx.rotate(Math.PI / 6);
+    ctx.beginPath();
+    ctx.moveTo(0, -r * 0.9);
+    ctx.lineTo(0, -r * 0.6);
+    ctx.moveTo(0, r * 0.9);
+    ctx.lineTo(0, r * 0.6);
+    ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(0, r * 0.05);
-        ctx.lineTo(r, r * 0.005);
-        ctx.lineTo(r, -r * 0.005);
-        ctx.lineTo(0, -r * 0.05);
-        ctx.arc(0, 0, r * 0.05, Math.PI / 2, 3 * Math.PI / 2);
-        ctx.fill();
+    ctx.rotate(Math.PI / 3);
+    ctx.beginPath();
+    ctx.moveTo(0, -r * 0.9);
+    ctx.lineTo(0, -r * 0.6);
+    ctx.moveTo(0, r * 0.9);
+    ctx.lineTo(0, r * 0.6);
+    ctx.stroke();
 
-        ctx.rotate(-handAngle);
+    ctx.rotate(Math.PI / 6);
+    ctx.beginPath();
+    ctx.moveTo(0, -r * 0.9);
+    ctx.lineTo(0, -r * 0.6);
+    ctx.moveTo(0, r * 0.9);
+    ctx.lineTo(0, r * 0.6);
+    ctx.stroke();
 
-        ctx.lineWidth = r * 0.015;
-        ctx.beginPath();
-        ctx.moveTo(0, -r);
-        ctx.lineTo(0, r);
-        ctx.moveTo(-r, 0);
-        ctx.lineTo(r, 0);
-        ctx.stroke();
-
-        ctx.rotate(Math.PI / 6);
-        ctx.beginPath();
-        ctx.moveTo(0, -r * 0.9);
-        ctx.lineTo(0, -r * 0.6);
-        ctx.moveTo(0, r * 0.9);
-        ctx.lineTo(0, r * 0.6);
-        ctx.stroke();
-
-        ctx.rotate(Math.PI / 6);
-        ctx.beginPath();
-        ctx.moveTo(0, -r * 0.9);
-        ctx.lineTo(0, -r * 0.6);
-        ctx.moveTo(0, r * 0.9);
-        ctx.lineTo(0, r * 0.6);
-        ctx.stroke();
-
-        ctx.rotate(Math.PI / 3);
-        ctx.beginPath();
-        ctx.moveTo(0, -r * 0.9);
-        ctx.lineTo(0, -r * 0.6);
-        ctx.moveTo(0, r * 0.9);
-        ctx.lineTo(0, r * 0.6);
-        ctx.stroke();
-
-        ctx.rotate(Math.PI / 6);
-        ctx.beginPath();
-        ctx.moveTo(0, -r * 0.9);
-        ctx.lineTo(0, -r * 0.6);
-        ctx.moveTo(0, r * 0.9);
-        ctx.lineTo(0, r * 0.6);
-        ctx.stroke();
-
-        ctx.restore();
-    }
+    ctx.restore();
 }
