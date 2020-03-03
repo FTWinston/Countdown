@@ -76,7 +76,7 @@ export const operators: Operator[] = [
     new Operator('÷', false, divide),
 ];
 
-self.onmessage = e => {
+self.onmessage = (e: MessageEvent) => {
     const data = e.data as [string, number, number[]];
 
     if (data[0] === 'calculate') {

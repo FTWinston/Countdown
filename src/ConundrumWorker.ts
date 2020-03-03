@@ -77,7 +77,7 @@ function removeUsed(all: string[], used: string[]) {
 let size: number = 0;
 let bestResult: [string, string] = ['', ''];
 
-self.onmessage = e => {
+self.onmessage = (e: MessageEvent) => {
     const data = e.data as [string, number];
 
     if (data[0] === 'generate') {

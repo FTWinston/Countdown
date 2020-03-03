@@ -8,7 +8,7 @@ function postLettersResult(msg: string[]) {
 let bestWords: string[] = ['Got no', 'response'];
 const numResults = 3;
 
-self.onmessage = async e => {
+self.onmessage = async (e: MessageEvent) => {
     const data = e.data as [string, string];
 
     if (data[0] === 'calculate') {

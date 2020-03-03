@@ -17,7 +17,7 @@ test('get the right solution', () => {
 test('don\'t remove subtractive brackets', () => {
     const solution = solve(919, [79, 13, 10, 3, 2]);
     expect(solution[1]).not.toBe('((79 + 13) x 10) - 3 - 2');
-    console.log(solution[1]);
+    // console.log(solution[1]);
 });
 
 test('remove multiplicative brackets', () => {
