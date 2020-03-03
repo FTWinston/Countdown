@@ -4,7 +4,7 @@ export async function findWords(letters: string, maxResults: number) {
     const response = await fetch(`https://cors-anywhere.herokuapp.com/http://anagramica.com/all/${letters.toLowerCase()}.`);
     const data = await response.json();
     
-    const allWords = JSON.parse(data.body).all as string[];
+    const allWords = data.all as string[];
     const useWords = allWords.length < maxResults ? allWords : allWords.slice(0, maxResults);
 
     return useWords.map(w => w.toUpperCase());
