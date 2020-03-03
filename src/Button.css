@@ -12,7 +12,7 @@ button {
 
 button:focus, button:hover {
     outline: none;
-    background-color: #eee;
+    background-color: #fff;
     border-color: #00c;
 }
 
