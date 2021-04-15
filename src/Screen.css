@@ -123,10 +123,6 @@
     grid-template-rows: 1fr;
 }
 
-.screen--letters.screen.screen--setup .screen__actions {
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
 @media only screen and (max-aspect-ratio: 1/1) {
     .screen--letters .screen__actions, .screen--numbers.screen--finished .screen__actions {
         grid-template-columns: 1fr;

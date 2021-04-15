@@ -28,7 +28,7 @@ export const About: React.FC<IAboutProps> = props => {
                 <p><strong>Numbers games</strong> have a player pick numbers (choosing a combination of "big" and
                 "small" numbers) and then attempt to work out a sequence of calculations with these numbers whose
                 final result is as close to a given target as possible.
-                The player wth the closest result should be awarded pointspoints: 10 for reaching it exactly,
+                The player wth the closest result should be awarded points: 10 for reaching it exactly,
                 7 for being 1-5 away, 5 for being 6-10 away.</p>
                 <p>The <strong>conundrum</strong> shows players a scrambled word that they compete to guess as
                 quickly as possible. When a player guesses, the clock is stopped, but if they guess wrongly,
