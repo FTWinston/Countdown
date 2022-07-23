@@ -1,4 +1,5 @@
 import { Handler } from '@netlify/functions';
+import fetch from 'node-fetch';
 
 // Returns the 3 longest anagrams found by scrambling the "letters" query parameter. 
 const handler: Handler = async (event, context) => {
@@ -15,8 +16,7 @@ const handler: Handler = async (event, context) => {
     // this works around that by adding a . on the end
     const apiResponse = await fetch(`http://anagramica.com/all/${letters}.`);
     const apiData = await apiResponse.json();
-
-    const allWords = apiData.all as string[];
+    const allWords = (apiData as any).all as string[];
     
     const maxResults = 3;
 
