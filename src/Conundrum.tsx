@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Worker from 'worker-loader!./ConundrumWorker';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
@@ -39,7 +38,7 @@ export class Conundrum extends React.PureComponent<IConundrumProps, IConundrumSt
     
     public componentDidMount() {
         if (this.props.settings.word === undefined) {
-            this.worker = new Worker();
+            this.worker = new Worker(new URL('./ConundrumWorker.ts', import.meta.url));
 
             this.worker.onmessage = (m) => {
                 const data = m.data as [string, string];

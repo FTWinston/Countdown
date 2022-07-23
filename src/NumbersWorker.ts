@@ -1,6 +1,5 @@
 function postNumbersResult(msg: [number, string]) {
-    const workaround = self as any;
-    workaround.postMessage(msg);
+    postMessage(msg);
 }
 
 function isInt(n: number) {
@@ -76,7 +75,7 @@ export const operators: Operator[] = [
     new Operator('÷', false, divide),
 ];
 
-self.onmessage = (e: MessageEvent) => {
+onmessage = (e: MessageEvent) => {
     const data = e.data as [string, number, number[]];
 
     if (data[0] === 'calculate') {

@@ -1,14 +1,13 @@
 import { findWords } from "./Anagrams";
 
 function postLettersResult(msg: string[]) {
-    const workaround = self as any;
-    workaround.postMessage(msg);
+    postMessage(msg);
 }
 
 let bestWords: string[] = ['Got no', 'response'];
 const numResults = 3;
 
-self.onmessage = async (e: MessageEvent) => {
+onmessage = async (e: MessageEvent) => {
     const data = e.data as [string, string];
 
     if (data[0] === 'calculate') {

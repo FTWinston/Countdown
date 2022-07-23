@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Worker from 'worker-loader!./LettersWorker';
 import { Button } from './Button';
 import { Clock } from './Clock';
 import { musicStartPosition } from './Constants';
@@ -220,7 +219,7 @@ export class LettersGame extends React.PureComponent<ILettersGameProps, ILetters
     }
 
     private async startGame() {
-        this.worker = new Worker();
+        this.worker = new Worker(new URL('./LettersWorker.ts', import.meta.url));
 
         this.worker.onmessage = (m) => {
             const data = m.data as string[];

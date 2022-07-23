@@ -3,10 +3,11 @@ import { randomInt, shuffle, shuffleWord } from './Random';
 
 function postMsg(msg: [string, string]) {
     // TODO: save this word to sessionStorage so we don't choose it again
-    (self as any).postMessage(msg);
+    postMessage(msg);
 }
 
 async function loadRandomWord() {
+    // eslint-disable-next-line no-restricted-globals
     const response = await fetch(`${self.location.origin}/conundrums/${size}.txt`);
     const text = await response.text();
     
@@ -77,7 +78,7 @@ function removeUsed(all: string[], used: string[]) {
 let size: number = 0;
 let bestResult: [string, string] = ['', ''];
 
-self.onmessage = (e: MessageEvent) => {
+onmessage = (e: MessageEvent) => {
     const data = e.data as [string, number];
 
     if (data[0] === 'generate') {
