@@ -402,9 +402,12 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
             delete this.state.allSequenceSettings[this.state.editingSettingsName];
         }
 
-        this.state.allSequenceSettings[settings.name] = settings;
+        const allSequenceSettings = {
+            ...this.state.allSequenceSettings,
+            [settings.name]: settings,
+        }
         this.setState({
-            allSequenceSettings: this.state.allSequenceSettings,
+            allSequenceSettings: allSequenceSettings,
             selectedSequenceSettingName: settings.name,
         });
         
@@ -539,6 +542,7 @@ export class Settings extends React.PureComponent<ISettingsProps, ISettingsState
                         case Game.Numbers:
                             return numbers[game[1]];
                         case Game.Conundrum:
+                        default:
                             return conundrums[game[1]];
                     }
                 }),

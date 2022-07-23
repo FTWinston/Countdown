@@ -122,6 +122,7 @@ export const App: React.FC = () => {
                 }
                 break;
             }
+        // eslint-ignore-next-line no-fallthrough
         default:
             renderScreen = (
                 <Welcome

@@ -57,8 +57,8 @@ async function findChildWord(letters: string[], ignoreFirst: boolean, mainWord: 
         // sometimes a partial match is too much, e.g. for EMPLOYEES it found EMPLOYES
         // another time COLUMNIST was turned into COLUMNSIT
         // so if this word's first 3 or last 3 appear in the main word, its no good
-        if (word.length > 3 && (mainWord.indexOf(word.substr(0, 3)) !== -1)
-            || (mainWord.indexOf(word.substr(word.length - 3, 3)) !== -1)) {
+        if (word.length > 3 && ((mainWord.indexOf(word.substr(0, 3)) !== -1)
+            || (mainWord.indexOf(word.substr(word.length - 3, 3)) !== -1))) {
             continue;
         }
 
