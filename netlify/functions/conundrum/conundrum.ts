@@ -8,7 +8,7 @@ function getWordFileUrl(length: number) {
 }
 
 interface RequestData {
-    length?: number;
+    size?: number;
 }
 
 async function chooseWord(length: number) {
@@ -83,9 +83,9 @@ function removeUsed(all: string[], used: string[]) {
 
 const handler: Handler = async (event, context) => {
     const requestData = event.body ? JSON.parse(event.body) as RequestData : null;
-    const length = requestData?.length ?? 8;
+    const size = requestData?.size ?? 8;
 
-    const properWord = await chooseWord(length);
+    const properWord = await chooseWord(size);
     let scrambled = shuffleWord(properWord);
 
     try {

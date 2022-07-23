@@ -1,5 +1,6 @@
 function postMsg(msg: [string, string]) {
     // TODO: save this word to sessionStorage so we don't choose it again
+    // ...pass in "previous" words to the API call, I guess?
     postMessage(msg);
 }
 
@@ -19,15 +20,13 @@ async function chooseConundrum(size: number): Promise<[string, string]> {
     return data;
 }
 
-let size: number = 0;
 let bestResult: [string, string] = ['', ''];
 
 onmessage = async (e: MessageEvent) => {
     const data = e.data as [string, number];
 
     if (data[0] === 'generate') {
-        size = data[1];
-
+        const size = data[1];
         bestResult = await chooseConundrum(size);
     }
     else if (data[0] === 'respond') {
@@ -37,3 +36,5 @@ onmessage = async (e: MessageEvent) => {
         }
     }
 }
+
+export {};

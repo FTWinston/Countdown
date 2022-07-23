@@ -36,3 +36,5 @@ onmessage = async (e: MessageEvent) => {
         postLettersResult(bestWords);
     }
 }
+
+export {};
