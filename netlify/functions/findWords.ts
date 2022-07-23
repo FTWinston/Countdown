@@ -9,7 +9,7 @@ interface RequestData {
 const handler: Handler = async (event, context) => {
     const requestData = event.body ? JSON.parse(event.body) as RequestData : null;
 
-    if (!requestData || !requestData.letters || !requestData.maxResults) {
+    if (!requestData || !requestData.letters || typeof requestData.letters !== 'string' || !requestData.maxResults || typeof requestData.maxResults !== 'number') {
         return {
             statusCode: 400,
             body: JSON.stringify({ message: 'expected body to be json containing "letters" string and "maxResults" number.' }),
@@ -17,6 +17,8 @@ const handler: Handler = async (event, context) => {
     }
 
     const responseWords = findAnagrams(requestData.letters, requestData.maxResults);
+    console.log('For request', requestData);
+    console.log('Found words', responseWords);
 
     return {
         statusCode: 200,

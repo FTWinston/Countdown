@@ -19,7 +19,7 @@ async function chooseWord(length: number) {
     return lines[randomInt(0, lines.length)].trim().toUpperCase();
 }
 
-async function shuffleInterestingly(word: string, scrambled: string) {
+async function shuffleInterestingly(word: string) {
     const remainingLetters = word.split('');
     let childWord: string;
     let first = true;
@@ -35,9 +35,6 @@ async function shuffleInterestingly(word: string, scrambled: string) {
         removeUsed(remainingLetters, childWord.split(''));
 
         combinedChildWords += childWord;
-        scrambled = combinedChildWords + remainingLetters.join('');
-        
-        bestResult = [scrambled, word];
     } while (remainingLetters.length > 2);
 
     return combinedChildWords + shuffle(remainingLetters).join('');
@@ -57,16 +54,23 @@ async function findChildWord(letters: string[], ignoreFirst: boolean, mainWord: 
             continue;
         }
 
-        // sometimes a partial match is too much, e.g. for EMPLOYEES it found EMPLOYES
+        // Sometimes a partial match is too much, e.g. for EMPLOYEES it found EMPLOYES
         // another time COLUMNIST was turned into COLUMNSIT
-        // so if this word's first 3 or last 3 appear in the main word, its no good
-        if (word.length > 3 && ((mainWord.indexOf(word.substr(0, 3)) !== -1)
-            || (mainWord.indexOf(word.substr(word.length - 3, 3)) !== -1))) {
-            continue;
+        // Also disallow sequences of letters that match the original, even if not
+        // in the same position, e.g. FLUTTERYB for BUTTERYFLY
+        const sequenceSize = 3;
+        let containsSubstring = false;
+        for (let startAt = 0; startAt < mainWord.length - sequenceSize; startAt++) {
+            const checkFor = mainWord.substring(startAt, startAt + sequenceSize);
+            if (word.indexOf(checkFor) !== -1) {
+                containsSubstring = true;
+                break;
+            }
         }
 
-        // TODO: disallow sequences of letters that match the original
-        // e.g. FLUTTERYB for BUTTERYFLY
+        if (containsSubstring) {
+            continue;
+        }
 
         break; // only break if this sequence isn't in the main word, and isn't close to it either
     }
@@ -89,7 +93,7 @@ const handler: Handler = async (event, context) => {
     let scrambled = shuffleWord(properWord);
 
     try {
-        scrambled = await shuffleInterestingly(properWord, scrambled);
+        scrambled = await shuffleInterestingly(properWord);
     }
     finally {
         return {
