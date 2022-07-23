@@ -1,5 +1,5 @@
 import { Handler } from '@netlify/functions';
-import fetch from 'node-fetch';
+import { findAnagrams } from 'src/findAnagrams';
 
 interface RequestData {
     letters?: string;
@@ -16,17 +16,7 @@ const handler: Handler = async (event, context) => {
         };
     }
 
-    const { letters, maxResults } = requestData;
-
-    // if you feed this letters that exactly match a word, this API method only returns that word.
-    // this works around that by adding a . on the end
-    const apiResponse = await fetch(`http://anagramica.com/all/${letters.toLowerCase()}.`);
-    const apiData = await apiResponse.json();
-    const allWords = (apiData as any).all as string[];
-    
-    // If we have more than teh requested number of words, trim superfluous ones. Convert to upper case.
-    const responseWords = (allWords.length < maxResults ? allWords : allWords.slice(0, maxResults))
-        .map(word => word.toUpperCase())
+    const responseWords = findAnagrams(requestData.letters, requestData.maxResults);
 
     return {
         statusCode: 200,
