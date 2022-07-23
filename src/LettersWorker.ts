@@ -12,7 +12,9 @@ onmessage = async (e: MessageEvent) => {
 
     if (data[0] === 'calculate') {
         const words = await findWords(data[1], numResults);
-        bestWords = words.map(w => `(${w.length}) ${w.toUpperCase()}`);
+        if (words.length > 0) {
+            bestWords = words.map(w => `(${w.length}) ${w.toUpperCase()}`);
+        }
     }
     else if (data[0] === 'respond') {
         // a result is needed NOW
