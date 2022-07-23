@@ -16,9 +16,7 @@ const handler: Handler = async (event, context) => {
         };
     }
 
-    const responseWords = findAnagrams(requestData.letters, requestData.maxResults);
-    console.log('For request', requestData);
-    console.log('Found words', responseWords);
+    const responseWords = await findAnagrams(requestData.letters, requestData.maxResults);
 
     return {
         statusCode: 200,
