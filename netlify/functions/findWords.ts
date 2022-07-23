@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 
 // Returns the 3 longest anagrams found by scrambling the "letters" query parameter. 
 const handler: Handler = async (event, context) => {
-    const letters = event.queryStringParameters?.letters?.toLowerCase() ?? null;
+    const letters = event.body?.toLowerCase() ?? null;
 
     if (!letters) {
         return {

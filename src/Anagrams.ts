@@ -1,8 +1,9 @@
 export async function findWords(letters: string, maxResults: number) {
     // if you feed this letters that exactly match a word, this API method only returns that word.
     // this works around that by adding a . on the end
-    const response = await fetch(`/.netlify/functions/findWords/${letters.toLowerCase()}.`, {
-        method: 'POST'
+    const response = await fetch('/.netlify/functions/findWords', {
+        method: 'POST',
+        body: letters.toLowerCase()
     });
 
     if (!response.ok) {
